@@ -38,6 +38,11 @@
 	<!--END OF YOUR OWN CSS-->
 </head >
 <body>
-	<button onclick="javascript: TestButtonHandler();">Click here to test connection!</button>
+    <button onclick="javascript: TestButtonHandler();">Click here to test connection!</button><br><br>
+    <label for="userID">User Name:</label>
+    <input type="text" id="userID" name="userID"><br><br>
+    <label for="passwd">Password:</label>
+    <input type="text" id="passwd" name="passwd"><br><br>
+    <button onclick="javascript: Login(userID,passwd);">Logon</button>
 </body>
 </html >
