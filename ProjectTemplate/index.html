@@ -21,7 +21,8 @@
 				dataType: "json",
 				success: function (msg) {
 					var responseFromServer = msg.d;
-					alert(responseFromServer);
+                    alert(responseFromServer);
+                    window.open("posts.html", "_self")
 				},
 				error: function (e) {
 					alert("this code will only execute if javascript is unable to access the webservice");
