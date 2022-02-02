@@ -22,7 +22,6 @@
 				success: function (msg) {
 					var responseFromServer = msg.d;
                     alert(responseFromServer);
-                    window.open("posts.html", "_self")
 				},
 				error: function (e) {
 					alert("this code will only execute if javascript is unable to access the webservice");
@@ -61,8 +60,7 @@
                     if (msg.d) {
                         //server replied true, so show the accounts panel
                         alert("success!");
-                        showPanel('accountsPanel');
-                        LoadAccounts();
+                        window.open("posts.html", "_self")
                     }
                     else {
                         //server replied false, so let the user know
