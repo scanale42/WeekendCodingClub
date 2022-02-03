@@ -1,11 +1,58 @@
-﻿a<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <title>Virtual Suggestion Box</title>
+    <!--DO NOT FORGET THIS SCRIPT TAG SO YOU CAN USE JQUERY!!!!!-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!--YOUR OWN JAVASCRIPT CAN GO RIGHT HERE-->
+    <script type="text/javascript">
+        //passes account info to the server, to create an account request
+        function NewPost(title, desc) {
+            var webMethod = "ProjectServices.asmx/NewPost";
+            var parameters = "{\"title\":\"" + encodeURI(title) + "\",\"desc\":\"" + encodeURI(desc) + "\"}";
+
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    //showPanel('logonPanel');
+                    alert("Suggestion pending approval...");
+                },
+                error: function (e) {
+                    alert("boo...");
+                }
+            });
+        }
+    </script>
+    <!--END OF YOUR OWN JAVASCRIPT-->
 
 </head>
 <body>
-    This is the posts page
+        This is the posts page
+    <div class="SubmitPanel">
+        <form onsubmit="NewPost($('#title').val(), $('#desc').val()); return false;">
+            <hr />
+            <div>
+                Title of Suggestion: <input type="text" size="50" id="title" />
+            </div>
+            <div>
+                Suggestion Details: <input type="text" size="200" id="desc" />
+            </div>
+            <hr />
+            <div>
+                <button type="submit">Submit Suggestion</button>
+            </div>
+        </form>
+     </div>
 </body>
-</html>
+
+	</script>
+	<!--END OF YOUR OWN JAVASCRIPT-->
+</html >
+
+
