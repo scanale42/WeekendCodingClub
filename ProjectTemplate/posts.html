@@ -161,26 +161,22 @@
         </form>
     </div>
 
-    <div class="adminContainer">
-        <div id="menu" class="menu">
-            <a href="#" id="suggestionsLink" onclick="LoadUnapprovedSuggestions()">Review Suggesions</a><br>
-            <a href="#" onclick="LogOff()">logoff</a>
-        </div>
-    </div>
-
     <div id="suggestionsPanel" class="contentPanel">
         <div class="left">Current Suggestions</div><hr />
         <div class="suggestionsBox" id="suggestionsBox"></div>
-        <div class="left">Current Unapproved Suggestions</div><hr />
-        <div class="unapprovedSuggestionsBox" id="unapprovedSuggestionsBox"></div>
-
-
-        </div>
     </div>
+    <div id="adminPanel" class="adminContainer" >
+            <a href="#" id="suggestionsLink" onclick="LoadUnapprovedSuggestions()">Review Suggesions</a><br>
+            <a href="#" onclick="LogOff()">logoff</a>
+            <div class="left">Current Unapproved Suggestions</div><hr />
+            <div class="unapprovedSuggestionsBox" id="unapprovedSuggestionsBox"></div>
+    </div>
+
+
+
+
 </body>
 
-	</script>
-	<!--END OF YOUR OWN JAVASCRIPT-->
 </html >
 
 
