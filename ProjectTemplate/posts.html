@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Virtual Suggestion Box</title>
     <!--DO NOT FORGET THIS SCRIPT TAG SO YOU CAN USE JQUERY!!!!!-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -107,7 +108,7 @@
                         admin = false;
                         for (var i = 0; i < suggestionsArray.length; i++) {
                             var suggestion;
-  
+
                             suggestion = "<div class='suggestionRow' id='suggestion'><button onclick=\"ApproveSuggestion(" + suggestionsArray[i].id + ")\">Approve</button><button onclick=\"DeleteSuggestion(" +
                                 suggestionsArray[i].id + ")\">Deny</button> <b>Category: </b> " + suggestionsArray[i].category + " <b>Title:</b> " +
                                 suggestionsArray[i].title + " <b> Details:</b> " + suggestionsArray[i].desc + "</div><br><br>"
@@ -169,19 +170,49 @@
 
 
     </script>
-
-
-
     <!--END OF YOUR OWN JAVASCRIPT-->
+    <!--Style to add CSS to this page-->
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            font-family: Arial;
+            background: #8C1D40;
+        }
 
+        body, html {
+            height: 100vh;
+            width: 100vw;
+        }
 
+        .homeBar {
+            background: #FFC627;
+            padding: 0;
+            font-size: 26px;
+            height: 10vh;
+            width: 100vw;
+            text-align: center;
+        }
 
+        .SubmitPanel {
+            background: #FFC627;
+            height: 70vh;
+            width: 30vw;
+        }
+
+        #category {
+            background: #FFC627;
+        }
+    </style>
 </head>
 <body onload="LoadSuggestions(); CheckAdmin();">
-    This is the Suggestions page
+    <div class="homeBar">
+        Devil Suggestions
+        <button id="logOff">Log Out</button>
+        <button id="homeButton">Home</button>
+    </div>
     <div class="SubmitPanel">
         <form onsubmit="NewSuggestion($('#title').val(), $('#desc').val() , $('#category').val()); return false;">
-            <hr />
             <div>
                 Category of Suggestion: <input type="text" size="20" id="category" />
             </div>
@@ -191,7 +222,6 @@
             <div>
                 Suggestion Details: <input type="text" size="200" id="desc" />
             </div>
-            <hr />
             <div>
                 <button type="submit">Submit Suggestion</button>
                 <br><br>
