@@ -28,12 +28,83 @@
                 }
             });
         }
+
+        //an ajax to kill an account
+        function DeleteSuggestion(id) {
+            var webMethod = "ProjectServices.asmx/DeleteSuggestion";
+            var parameters = "{\"id\":\"" + encodeURI(id) + "\"}";
+
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    LoadUnapprovedSuggestions()
+                },
+                error: function (e) {
+                    alert("boo...");
+                }
+            });
+        }
+
+        //this function grabs accounts and loads our account window
+        function LoadUnapprovedSuggestions() {
+            var webMethod = "ProjectServices.asmx/GetUnapprovedSuggestions";
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.d.length > 0) {
+                        //let's put our accounts that we get from the
+                        //server into our accountsArray variable
+                        //so we can use them in other functions as well
+                        suggestionsArray = msg.d;
+                        //this clears out the div that will hold our account info
+                        $("#suggestionsBox").empty();
+                        //again, we assume we're not an admin unless we see data from the server
+                        //that we know only admins can see
+                        admin = false;
+                        for (var i = 0; i < suggestionsArray.length; i++) {
+                            //we grab on to a specific html element in jQuery
+                            //by using a  # followed by that element's id.
+                            var suggestion;
+                            //if they have access to admin-level info (like userid and password) then
+                            //create output that has an edit option
+  
+                            suggestion = "<div class='suggestionRow' id='suggestion'><button>Approve</button><button onclick=\"DeleteSuggestion(" + suggestionsArray[i].id +")\">Deny</button> <b>Title:</b> " +
+                                suggestionsArray[i].title + " <b>Details:</b> " + suggestionsArray[i].desc + "</div><br><br>"
+                            $("#suggestionsBox").append(
+                                //anything we throw at our panel in the form of text
+                                //will be added to the contents of that panel.  Here
+                                //we're putting together a div that holds info on the
+                                //account as well as an edit link if the user is an admin
+                                suggestion
+                            );
+                        }
+                    }
+                },
+                error: function (e) {
+                    alert("boo...");
+                }
+            });
+        }
+
+ //       function LoadAdminSuggestions()
+   //     {
+  //           LoadUnappprovedRequests()
+   //     }
     </script>
     <!--END OF YOUR OWN JAVASCRIPT-->
 
+
+
 </head>
 <body>
-        This is the posts page
+    This is the posts page
     <div class="SubmitPanel">
         <form onsubmit="NewPost($('#title').val(), $('#desc').val()); return false;">
             <hr />
@@ -48,7 +119,23 @@
                 <button type="submit">Submit Suggestion</button>
             </div>
         </form>
-     </div>
+    </div>
+
+    <div class="adminContainer">
+        <div id="menu" class="menu">
+            <a href="#" id="suggestionsLink" onclick="LoadUnapprovedSuggestions()">Approve Suggesions</a><br>
+            <a href="#" onclick="LogOff()">logoff</a>
+        </div>
+    </div>
+
+    <div id="suggestionsPanel" class="contentPanel">
+        <div class="left">Current Suggestions</div><hr />
+        <div class="left">Current Unapproved Suggestions</div>
+        <div class="suggestionsBox" id="suggestionsBox">
+
+
+        </div>
+    </div>
 </body>
 
 	</script>

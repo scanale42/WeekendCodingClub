@@ -77,7 +77,7 @@ namespace ProjectTemplate
             //our connection string comes from our web.config file like we talked about earlier
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
             //here's our query.  A basic select with nothing fancy.  Note the parameters that begin with @
-            string sqlSelect = "SELECT id FROM Accounts WHERE userName=@idValue and pwd=@passValue";
+            string sqlSelect = "SELECT id, admin FROM Accounts WHERE userName=@idValue and pwd=@passValue";
 
             //set up our connection object to be ready to use our connection string
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
@@ -105,7 +105,7 @@ namespace ProjectTemplate
                 //so we can check those values later on other method calls to see if they 
                 //are 1) logged in at all, and 2) and admin or not
                 Session["id"] = sqlDt.Rows[0]["id"];
-                //Session["admin"] = sqlDt.Rows[0]["admin"];
+                Session["admin"] = sqlDt.Rows[0]["admin"];
                 success = true;
             }
             //return the result!
@@ -152,6 +152,85 @@ namespace ProjectTemplate
             {
             }
             sqlConnection.Close();
+        }
+
+        //EXAMPLE OF A SELECT, AND RETURNING "COMPLEX" DATA TYPES
+        [WebMethod(EnableSession = true)]
+        public Suggestion[] GetUnapprovedSuggestions()
+        {
+            //check out the return type.  It's an array of Account objects.  You can look at our custom Account class in this solution to see that it's 
+            //just a container for public class-level variables.  It's a simple container that asp.net will have no trouble converting into json.  When we return
+            //sets of information, it's a good idea to create a custom container class to represent instances (or rows) of that information, and then return an array of those objects.  
+            //Keeps everything simple.
+
+            //WE ONLY SHARE ACCOUNTS WITH LOGGED IN USERS!
+            int adminValue = Convert.ToInt32(Session["admin"]);
+            if (Convert.ToInt32(Session["admin"]) == 1)
+            {
+                DataTable sqlDt = new DataTable("suggestions");
+
+                string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+                string sqlSelect = "select id, title, `desc`, submitter from suggestions where approved=0 order by id";
+
+                MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+                MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+                //gonna use this to fill a data table
+                MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+                //filling the data table
+                sqlDa.Fill(sqlDt);
+
+                //loop through each row in the dataset, creating instances
+                //of our container class Account.  Fill each acciount with
+                //data from the rows, then dump them in a list.
+                List<Suggestion> suggestions = new List<Suggestion>();
+                for (int i = 0; i < sqlDt.Rows.Count; i++)
+                {
+
+                    suggestions.Add(new Suggestion
+                    {
+                        id = Convert.ToInt32(sqlDt.Rows[i]["id"]),
+                        title = sqlDt.Rows[i]["title"].ToString(),
+                        desc = sqlDt.Rows[i]["desc"].ToString(),
+                        submitter = sqlDt.Rows[i]["submitter"].ToString()
+                    });
+                }
+  
+                //convert the list of accounts to an array and return!
+                return suggestions.ToArray();
+            }
+            else
+            {
+                //if they're not logged in, return an empty array
+                return new Suggestion[0];
+            }
+        }
+
+        //EXAMPLE OF A DELETE QUERY
+        [WebMethod(EnableSession = true)]
+        public void DeleteSuggestion(string id)
+        {
+            if (Convert.ToInt32(Session["admin"]) == 1)
+            {
+                string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+                //this is a simple update, with parameters to pass in values
+                string sqlSelect = "delete from suggestions where id=@idValue";
+
+                MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+                MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+                sqlCommand.Parameters.AddWithValue("@idValue", HttpUtility.UrlDecode(id));
+
+                sqlConnection.Open();
+                try
+                {
+                    sqlCommand.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                }
+                sqlConnection.Close();
+            }
         }
 
     }
