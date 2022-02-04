@@ -70,6 +70,27 @@
             });
         }
 
+        //an ajax to approve a suggestion
+        function CheckAdmin() {
+            var webMethod = "ProjectServices.asmx/IsAdmin";
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.d) {
+                        ShowMenu();
+                        alert("Admin");
+                    }
+                    else {
+                        alert("Not an Admin");
+                    }
+
+                },
+            });
+        }
+
         //this function grabs all the unapproved suggestions and displays them
         function LoadUnapprovedSuggestions() {
             var webMethod = "ProjectServices.asmx/GetUnapprovedSuggestions";
@@ -125,6 +146,7 @@
                                 suggestion
                             );
                         }
+
                     }
                 },
                 error: function (e) {
@@ -132,15 +154,30 @@
                 }
             });
         }
+        function ShowMenu() {
+
+            $("#adminPanel").css("visibility", "visible");
+        }
+
+
+        //just hides the menu
+        function HideMenu() {
+
+            $("#adminPanel").css("visibility", "hidden");
+            $("#adminLink").text("");
+        }
 
 
     </script>
+
+
+
     <!--END OF YOUR OWN JAVASCRIPT-->
 
 
 
 </head>
-<body onload="LoadSuggestions()">
+<body onload="LoadSuggestions(); CheckAdmin();">
     This is the Suggestions page
     <div class="SubmitPanel">
         <form onsubmit="NewSuggestion($('#title').val(), $('#desc').val() , $('#category').val()); return false;">
@@ -157,6 +194,7 @@
             <hr />
             <div>
                 <button type="submit">Submit Suggestion</button>
+                <br><br>
             </div>
         </form>
     </div>
@@ -164,8 +202,9 @@
     <div id="suggestionsPanel" class="contentPanel">
         <div class="left">Current Suggestions</div><hr />
         <div class="suggestionsBox" id="suggestionsBox"></div>
+        <br><br>
     </div>
-    <div id="adminPanel" class="adminContainer" >
+    <div id="adminPanel" class="adminContainer" style="visibility: hidden">
             <a href="#" id="suggestionsLink" onclick="LoadUnapprovedSuggestions()">Review Suggesions</a><br>
             <a href="#" onclick="LogOff()">logoff</a>
             <div class="left">Current Unapproved Suggestions</div><hr />

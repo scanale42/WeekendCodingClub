@@ -268,5 +268,16 @@ namespace ProjectTemplate
             }
         }
 
+        [WebMethod(EnableSession = true)]
+        public bool IsAdmin()
+        {
+            bool success = false;
+            if (Convert.ToInt32(Session["admin"]) == 1)
+                success = true;
+            else
+                success = false;
+            return success;
+        }
+
     }
 }
