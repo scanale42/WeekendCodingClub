@@ -108,7 +108,7 @@
                         for (var i = 0; i < suggestionsArray.length; i++) {
                             var suggestion;
   
-                            suggestion = "<div class='suggestionRow' id='suggestion'><button onclick=\"ApproveSuggestion(" + suggestionsArray[i].id + ")\">Approve</button><button onclick=\"DeleteSuggestion(" +
+                            suggestion = "<div class='suggestionRow' id='suggestion'><button onclick=\"ApproveSuggestion(" + suggestionsArray[i].id + ")\">Approve</button><button onclick=\"DenySuggestion(" +
                                 suggestionsArray[i].id + ")\">Deny</button> <b>Category: </b> " + suggestionsArray[i].category + " <b>Title:</b> " +
                                 suggestionsArray[i].title + " <b> Details:</b> " + suggestionsArray[i].desc + "</div><br><br>"
                             $("#unapprovedSuggestionsBox").append(
@@ -154,6 +154,82 @@
                 }
             });
         }
+
+        //this function grabs all the unapproved accounts and displays them
+        function LoadUnapprovedAccounts() {
+            var webMethod = "ProjectServices.asmx/GetUnapprovedAccounts";
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.d.length > 0) {
+                        accountsArray = msg.d;
+                        //this clears out the div that will hold our suggestion info. Not sure if this is in use any more.
+                        $("#unapprovedSuggestionsBox").empty();
+                        admin = false;
+                        for (var i = 0; i < accountsArray.length; i++) {
+                            var account;
+
+                            account = "<div class='accountRow' id='account'><button onclick=\"ApproveAccount(" + accountsArray[i].id + ")\">Approve</button><button onclick=\"DenyAccount(" +
+                                accountsArray[i].id + ")\">Deny</button> <b>First Name </b> " + accountsArray[i].firstName + " <b>Last Name:</b> " +
+                                accountsArray[i].lastName + " <b> Username: </b> " + accountsArray[i].userName + "</div><br><br>"
+                            $("#unapprovedSuggestionsBox").append(
+                                account
+                            );
+                        }
+                    }
+                },
+                error: function (e) {
+                    alert("Something unexpected happened.You've been eaten by a grue.");
+                }
+            });
+        }
+
+
+        //an ajax to delete a suggestion post
+        function DenyAccount(id) {
+            var webMethod = "ProjectServices.asmx/DenyAccount";
+            var parameters = "{\"id\":\"" + encodeURI(id) + "\"}";
+
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    LoadUnapprovedAccounts()
+                },
+                error: function (e) {
+                    alert("boo...");
+                }
+            });
+        }
+
+        //an ajax to approve a suggestion
+        function ApproveAccount(id) {
+            var webMethod = "ProjectServices.asmx/ApproveAccount";
+            var parameters = "{\"id\":\"" + encodeURI(id) + "\"}";
+
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    LoadUnapprovedAccounts();
+                },
+                error: function (e) {
+                    alert("boo...");
+                }
+            });
+        }
+
+
+        //This function shows the admin menu
         function ShowMenu() {
 
             $("#adminPanel").css("visibility", "visible");
@@ -178,7 +254,7 @@
 
 </head>
 <body onload="LoadSuggestions(); CheckAdmin();">
-    This is the Suggestions page
+    This is the Suggestions page <a href="#" onclick="LogOff()">logoff</a>
     <div class="SubmitPanel">
         <form onsubmit="NewSuggestion($('#title').val(), $('#desc').val() , $('#category').val()); return false;">
             <hr />
@@ -205,10 +281,11 @@
         <br><br>
     </div>
     <div id="adminPanel" class="adminContainer" style="visibility: hidden">
-            <a href="#" id="suggestionsLink" onclick="LoadUnapprovedSuggestions()">Review Suggesions</a><br>
-            <a href="#" onclick="LogOff()">logoff</a>
-            <div class="left">Current Unapproved Suggestions</div><hr />
-            <div class="unapprovedSuggestionsBox" id="unapprovedSuggestionsBox"></div>
+        <a href="#" id="suggestionsLink" onclick="LoadUnapprovedSuggestions()">Review Suggesions</a><br>
+        <a href="#" id="suggestionsLink" onclick="LoadUnapprovedAccounts()">Review Account Requests</a><br>
+        <a href="#" id="suggestionsLink" onclick="LoadAccounts()">Manage Accounts</a><br>
+        <div class="left">Current Unapproved Suggestions</div><hr />
+        <div class="unapprovedSuggestionsBox" id="unapprovedSuggestionsBox"></div>
     </div>
 
 

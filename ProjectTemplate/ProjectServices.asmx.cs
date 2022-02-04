@@ -77,7 +77,7 @@ namespace ProjectTemplate
             //our connection string comes from our web.config file like we talked about earlier
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
             //here's our query.  A basic select with nothing fancy.  Note the parameters that begin with @
-            string sqlSelect = "SELECT id, admin FROM Accounts WHERE userName=@idValue and pwd=@passValue";
+            string sqlSelect = "SELECT id, admin, approved FROM Accounts WHERE userName=@idValue and pwd=@passValue";
 
             //set up our connection object to be ready to use our connection string
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
@@ -99,14 +99,19 @@ namespace ProjectTemplate
             sqlDa.Fill(sqlDt);
             //check to see if any rows were returned.  If they were, it means it's 
             //a legit account
+
             if (sqlDt.Rows.Count > 0)
+            
             {
                 //if we found an account, store the id and admin status in the session
                 //so we can check those values later on other method calls to see if they 
-                //are 1) logged in at all, and 2) and admin or not
-                Session["id"] = sqlDt.Rows[0]["id"];
-                Session["admin"] = sqlDt.Rows[0]["admin"];
-                success = true;
+                //are 1) logged in at all, and 2) and admin or not. Also checking to see if use is approved.
+                int approved = Convert.ToInt32(sqlDt.Rows[0]["approved"]);
+                if (approved == 1){ 
+                    Session["id"] = sqlDt.Rows[0]["id"];
+                    Session["admin"] = sqlDt.Rows[0]["admin"];
+                    success = true;
+                }
             }
             //return the result!
             return success;
@@ -216,7 +221,7 @@ namespace ProjectTemplate
 
         //Delete a suggestion
         [WebMethod(EnableSession = true)]
-        public void DeleteSuggestion(string id)
+        public void DenySuggestion(string id)
         {
             if (Convert.ToInt32(Session["admin"]) == 1)
             {
@@ -250,6 +255,103 @@ namespace ProjectTemplate
                 string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
                 //this is a simple update, with parameters to pass in values
                 string sqlSelect = "update suggestions set approved=1 where id=@idValue";
+
+                MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+                MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+                sqlCommand.Parameters.AddWithValue("@idValue", HttpUtility.UrlDecode(id));
+
+                sqlConnection.Open();
+                try
+                {
+                    sqlCommand.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                }
+                sqlConnection.Close();
+            }
+        }
+
+
+        //Grabbing all of the Accounts that have not been approved yet. 
+        [WebMethod(EnableSession = true)]
+        public Account[] GetUnapprovedAccounts()
+        {
+            if (Convert.ToInt32(Session["admin"]) == 1)
+            {
+                DataTable sqlDt = new DataTable("accounts");
+
+                string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+                string sqlSelect = "select id, firstName, lastName, userName, emailAddress from Accounts where approved=0 order by id";
+
+                MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+                MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+                MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+                sqlDa.Fill(sqlDt);
+
+                List<Account> account = new List<Account>();
+                for (int i = 0; i < sqlDt.Rows.Count; i++)
+                {
+
+                    account.Add(new Account
+                    {
+                        id = Convert.ToInt32(sqlDt.Rows[i]["id"]),
+                        firstName = sqlDt.Rows[i]["firstName"].ToString(),
+                        lastName = sqlDt.Rows[i]["lastName"].ToString(),
+                        userName = sqlDt.Rows[i]["userName"].ToString(),
+                        emailAddress = sqlDt.Rows[i]["emailAddress"].ToString()
+                    });
+                }
+
+                //convert the list of suggestionsto an array and return!
+                return account.ToArray();
+            }
+            else
+            {
+                //if they're not logged in, return an empty array
+                return new Account[0];
+            }
+        }
+
+
+        //Deny an Account
+        [WebMethod(EnableSession = true)]
+        public void DenyAccount(string id)
+        {
+            if (Convert.ToInt32(Session["admin"]) == 1)
+            {
+                string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+                //this is a simple update, with parameters to pass in values
+                string sqlSelect = "delete from Accounts where id=@idValue";
+
+                MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+                MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+                sqlCommand.Parameters.AddWithValue("@idValue", HttpUtility.UrlDecode(id));
+
+                sqlConnection.Open();
+                try
+                {
+                    sqlCommand.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                }
+                sqlConnection.Close();
+            }
+        }
+
+        //Approve an Account
+        [WebMethod(EnableSession = true)]
+        public void ApproveAccount(string id)
+        {
+            if (Convert.ToInt32(Session["admin"]) == 1)
+            {
+                string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+                //this is a simple update, with parameters to pass in values
+                string sqlSelect = "update Accounts set approved=1 where id=@idValue";
 
                 MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
                 MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
