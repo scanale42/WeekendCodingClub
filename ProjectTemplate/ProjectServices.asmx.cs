@@ -112,16 +112,12 @@ namespace ProjectTemplate
             return success;
         }
 
-        //EXAMPLE OF AN INSERT QUERY WITH PARAMS PASSED IN.  BONUS GETTING THE INSERTED ID FROM THE DB!
+        //Posting a new suggestion
         [WebMethod(EnableSession = true)]
         public void NewPost(string title, string desc)
         {
             int userID = Convert.ToInt32(Session["id"]);
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
-            //the only thing fancy about this query is SELECT LAST_INSERT_ID() at the end.  All that
-            //does is tell mySql server to return the primary key of the last inserted row.
-            //string sqlSelect = "insert into suggestions(title, desc, submitter, approved, status) " +
-            //    "values(@titleValue, @descValue, 1, 0, 0); SELECT LAST_INSERT_ID();";
             string sqlSelect = "insert into suggestions (title, `desc`, submitter, approved, status) " +
             "values(@titleValue, @descValue, @userID, 0, 0); SELECT LAST_INSERT_ID();";
 
@@ -131,22 +127,11 @@ namespace ProjectTemplate
             sqlCommand.Parameters.AddWithValue("@titleValue", HttpUtility.UrlDecode(title));
             sqlCommand.Parameters.AddWithValue("@descValue", HttpUtility.UrlDecode(desc));
             sqlCommand.Parameters.AddWithValue("@userID", userID);
-            //sqlCommand.Parameters.AddWithValue("@submitterValue", HttpUtility.UrlDecode(submitter));
 
-            //this time, we're not using a data adapter to fill a data table.  We're just
-            //opening the connection, telling our command to "executescalar" which says basically
-            //execute the query and just hand me back the number the query returns (the ID, remember?).
-            //don't forget to close the connection!
             sqlConnection.Open();
-            //we're using a try/catch so that if the query errors out we can handle it gracefully
-            //by closing the connection and moving on
            try
             {
                 int postID = Convert.ToInt32(sqlCommand.ExecuteScalar());
-                //here, you could use this accountID for additional queries regarding
-                //the requested account.  Really this is just an example to show you
-                //a query where you get the primary key of the inserted row back from
-                //the database!
             }
             catch (Exception e)
             {
@@ -154,16 +139,12 @@ namespace ProjectTemplate
             sqlConnection.Close();
         }
 
-        //EXAMPLE OF A SELECT, AND RETURNING "COMPLEX" DATA TYPES
+        //Grabbing all of the suggestions that have not been approved yet. 
         [WebMethod(EnableSession = true)]
         public Suggestion[] GetUnapprovedSuggestions()
         {
-            //check out the return type.  It's an array of Account objects.  You can look at our custom Account class in this solution to see that it's 
-            //just a container for public class-level variables.  It's a simple container that asp.net will have no trouble converting into json.  When we return
-            //sets of information, it's a good idea to create a custom container class to represent instances (or rows) of that information, and then return an array of those objects.  
-            //Keeps everything simple.
 
-            //WE ONLY SHARE ACCOUNTS WITH LOGGED IN USERS!
+            //Only admins can delete suggestions
             int adminValue = Convert.ToInt32(Session["admin"]);
             if (Convert.ToInt32(Session["admin"]) == 1)
             {
@@ -175,14 +156,9 @@ namespace ProjectTemplate
                 MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
                 MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
 
-                //gonna use this to fill a data table
                 MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
-                //filling the data table
                 sqlDa.Fill(sqlDt);
 
-                //loop through each row in the dataset, creating instances
-                //of our container class Account.  Fill each acciount with
-                //data from the rows, then dump them in a list.
                 List<Suggestion> suggestions = new List<Suggestion>();
                 for (int i = 0; i < sqlDt.Rows.Count; i++)
                 {
@@ -196,7 +172,7 @@ namespace ProjectTemplate
                     });
                 }
   
-                //convert the list of accounts to an array and return!
+                //convert the list of suggestionsto an array and return!
                 return suggestions.ToArray();
             }
             else
@@ -206,7 +182,7 @@ namespace ProjectTemplate
             }
         }
 
-        //EXAMPLE OF A DELETE QUERY
+        //Delete a suggestion
         [WebMethod(EnableSession = true)]
         public void DeleteSuggestion(string id)
         {
