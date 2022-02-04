@@ -9,9 +9,9 @@
     <!--YOUR OWN JAVASCRIPT CAN GO RIGHT HERE-->
     <script type="text/javascript">
         //passes account info to the server, to create an account request
-        function NewPost(title, desc) {
-            var webMethod = "ProjectServices.asmx/NewPost";
-            var parameters = "{\"title\":\"" + encodeURI(title) + "\",\"desc\":\"" + encodeURI(desc) + "\"}";
+        function NewSuggestion(title, desc, category) {
+            var webMethod = "ProjectServices.asmx/NewSuggestion";
+            var parameters = "{\"title\":\"" + encodeURI(title) + "\",\"desc\":\"" + encodeURI(desc) + "\",\"category\":\"" + encodeURI(category) + "\"}";
 
             $.ajax({
                 type: "POST",
@@ -49,9 +49,62 @@
             });
         }
 
+        //an ajax to approve a suggestion
+        function ApproveSuggestion(id) {
+            var webMethod = "ProjectServices.asmx/ApproveSuggestion";
+            var parameters = "{\"id\":\"" + encodeURI(id) + "\"}";
+
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    LoadUnapprovedSuggestions();
+                    LoadSuggestions();
+                },
+                error: function (e) {
+                    alert("boo...");
+                }
+            });
+        }
+
         //this function grabs all the unapproved suggestions and displays them
         function LoadUnapprovedSuggestions() {
             var webMethod = "ProjectServices.asmx/GetUnapprovedSuggestions";
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.d.length > 0) {
+                        suggestionsArray = msg.d;
+                        //this clears out the div that will hold our suggestion info. Not sure if this is in use any more.
+                        $("#unapprovedSuggestionsBox").empty();
+                        admin = false;
+                        for (var i = 0; i < suggestionsArray.length; i++) {
+                            var suggestion;
+  
+                            suggestion = "<div class='suggestionRow' id='suggestion'><button onclick=\"ApproveSuggestion(" + suggestionsArray[i].id + ")\">Approve</button><button onclick=\"DeleteSuggestion(" +
+                                suggestionsArray[i].id + ")\">Deny</button> <b>Category: </b> " + suggestionsArray[i].category + " <b>Title:</b> " +
+                                suggestionsArray[i].title + " <b> Details:</b> " + suggestionsArray[i].desc + "</div><br><br>"
+                            $("#unapprovedSuggestionsBox").append(
+                                suggestion
+                            );
+                        }
+                    }
+                },
+                error: function (e) {
+                    alert("Something unexpected happened.You've been eaten by a grue.");
+                }
+            });
+        }
+
+        //this function grabs all the approved suggestions and displays them
+        function LoadSuggestions() {
+            var webMethod = "ProjectServices.asmx/LoadSuggestions";
             $.ajax({
                 type: "POST",
                 url: webMethod,
@@ -65,9 +118,9 @@
                         admin = false;
                         for (var i = 0; i < suggestionsArray.length; i++) {
                             var suggestion;
-  
-                            suggestion = "<div class='suggestionRow' id='suggestion'><button>Approve</button><button onclick=\"DeleteSuggestion(" + suggestionsArray[i].id +")\">Deny</button> <b>Title:</b> " +
-                                suggestionsArray[i].title + " <b>Details:</b> " + suggestionsArray[i].desc + "</div><br><br>"
+
+                            suggestion = "<div class='suggestionRow' id='suggestion'><b>Category: </b> " + suggestionsArray[i].category + " <b>Title:</b> " +
+                                suggestionsArray[i].title + " <b> Details:</b> " + suggestionsArray[i].desc + "</div><br><br>"
                             $("#suggestionsBox").append(
                                 suggestion
                             );
@@ -87,11 +140,14 @@
 
 
 </head>
-<body>
+<body onload="LoadSuggestions()">
     This is the Suggestions page
     <div class="SubmitPanel">
-        <form onsubmit="NewPost($('#title').val(), $('#desc').val()); return false;">
+        <form onsubmit="NewSuggestion($('#title').val(), $('#desc').val() , $('#category').val()); return false;">
             <hr />
+            <div>
+                Category of Suggestion: <input type="text" size="20" id="category" />
+            </div>
             <div>
                 Title of Suggestion: <input type="text" size="50" id="title" />
             </div>
@@ -114,8 +170,9 @@
 
     <div id="suggestionsPanel" class="contentPanel">
         <div class="left">Current Suggestions</div><hr />
-        <div class="left">Current Unapproved Suggestions</div>
-        <div class="suggestionsBox" id="suggestionsBox">
+        <div class="suggestionsBox" id="suggestionsBox"></div>
+        <div class="left">Current Unapproved Suggestions</div><hr />
+        <div class="unapprovedSuggestionsBox" id="unapprovedSuggestionsBox"></div>
 
 
         </div>

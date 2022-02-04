@@ -114,12 +114,12 @@ namespace ProjectTemplate
 
         //Posting a new suggestion
         [WebMethod(EnableSession = true)]
-        public void NewPost(string title, string desc)
+        public void NewSuggestion(string title, string desc, string category)
         {
             int userID = Convert.ToInt32(Session["id"]);
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
-            string sqlSelect = "insert into suggestions (title, `desc`, submitter, approved, status) " +
-            "values(@titleValue, @descValue, @userID, 0, 0); SELECT LAST_INSERT_ID();";
+            string sqlSelect = "insert into suggestions (title, `desc`, submitter, approved, status, category) " +
+            "values(@titleValue, @descValue, @userID, 0, 0, @category); SELECT LAST_INSERT_ID();";
 
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
             MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
@@ -127,6 +127,7 @@ namespace ProjectTemplate
             sqlCommand.Parameters.AddWithValue("@titleValue", HttpUtility.UrlDecode(title));
             sqlCommand.Parameters.AddWithValue("@descValue", HttpUtility.UrlDecode(desc));
             sqlCommand.Parameters.AddWithValue("@userID", userID);
+            sqlCommand.Parameters.AddWithValue("@category", category);
 
             sqlConnection.Open();
            try
@@ -143,15 +144,12 @@ namespace ProjectTemplate
         [WebMethod(EnableSession = true)]
         public Suggestion[] GetUnapprovedSuggestions()
         {
-
-            //Only admins can delete suggestions
-            int adminValue = Convert.ToInt32(Session["admin"]);
             if (Convert.ToInt32(Session["admin"]) == 1)
             {
                 DataTable sqlDt = new DataTable("suggestions");
 
                 string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
-                string sqlSelect = "select id, title, `desc`, submitter from suggestions where approved=0 order by id";
+                string sqlSelect = "select id, title, `desc`, submitter, category from suggestions where approved=0 order by id";
 
                 MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
                 MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
@@ -168,7 +166,8 @@ namespace ProjectTemplate
                         id = Convert.ToInt32(sqlDt.Rows[i]["id"]),
                         title = sqlDt.Rows[i]["title"].ToString(),
                         desc = sqlDt.Rows[i]["desc"].ToString(),
-                        submitter = sqlDt.Rows[i]["submitter"].ToString()
+                        submitter = sqlDt.Rows[i]["submitter"].ToString(),
+                        category = sqlDt.Rows[i]["category"].ToString()
                     });
                 }
   
@@ -182,6 +181,39 @@ namespace ProjectTemplate
             }
         }
 
+        //Grabbing all of the suggestions that have been approved. 
+        [WebMethod(EnableSession = true)]
+        public Suggestion[] LoadSuggestions()
+        {
+            DataTable sqlDt = new DataTable("suggestions");
+
+            string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+            string sqlSelect = "select id, title, `desc`, submitter, category from suggestions where approved=1 order by id";
+
+            MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+            MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+            MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+            sqlDa.Fill(sqlDt);
+
+            List<Suggestion> suggestions = new List<Suggestion>();
+            for (int i = 0; i < sqlDt.Rows.Count; i++)
+            {
+
+                suggestions.Add(new Suggestion
+                {
+                    id = Convert.ToInt32(sqlDt.Rows[i]["id"]),
+                    title = sqlDt.Rows[i]["title"].ToString(),
+                    desc = sqlDt.Rows[i]["desc"].ToString(),
+                    submitter = sqlDt.Rows[i]["submitter"].ToString(),
+                    category = sqlDt.Rows[i]["category"].ToString()
+                });
+            }
+
+            //convert the list of suggestionsto an array and return!
+            return suggestions.ToArray();
+        }
+
         //Delete a suggestion
         [WebMethod(EnableSession = true)]
         public void DeleteSuggestion(string id)
@@ -191,6 +223,33 @@ namespace ProjectTemplate
                 string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
                 //this is a simple update, with parameters to pass in values
                 string sqlSelect = "delete from suggestions where id=@idValue";
+
+                MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+                MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+                sqlCommand.Parameters.AddWithValue("@idValue", HttpUtility.UrlDecode(id));
+
+                sqlConnection.Open();
+                try
+                {
+                    sqlCommand.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                }
+                sqlConnection.Close();
+            }
+        }
+
+        //Suggestion Approved
+        [WebMethod(EnableSession = true)]
+        public void ApproveSuggestion(string id)
+        {
+            if (Convert.ToInt32(Session["admin"]) == 1)
+            {
+                string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+                //this is a simple update, with parameters to pass in values
+                string sqlSelect = "update suggestions set approved=1 where id=@idValue";
 
                 MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
                 MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);

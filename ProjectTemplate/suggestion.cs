@@ -13,5 +13,6 @@ namespace ProjectTemplate
         public string submitter;
         public string approved;
         public string status;
+        public string category;
     }
 }
