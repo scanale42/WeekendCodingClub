@@ -107,7 +107,7 @@
                         admin = false;
                         for (var i = 0; i < suggestionsArray.length; i++) {
                             var suggestion;
-  
+
                             suggestion = "<div class='suggestionRow' id='suggestion'><button onclick=\"ApproveSuggestion(" + suggestionsArray[i].id + ")\">Approve</button><button onclick=\"DenySuggestion(" +
                                 suggestionsArray[i].id + ")\">Deny</button> <b>Category: </b> " + suggestionsArray[i].category + " <b>Title:</b> " +
                                 suggestionsArray[i].title + " <b> Details:</b> " + suggestionsArray[i].desc + "</div><br><br>"
@@ -250,14 +250,47 @@
 
     <!--END OF YOUR OWN JAVASCRIPT-->
 
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            font-family: Arial;
+            background: #8C1D40;
+        }
 
+        body, html {
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .homeBar {
+            background: #FFC627;
+            padding: 0;
+            font-size: 26px;
+            height: 10vh;
+            width: 100vw;
+            text-align: center;
+        }
+
+        .SubmitPanel {
+            background: #FFC627;
+            height: 70vh;
+            width: 30vw;
+        }
+
+        #category {
+            background: #FFC627;
+        }
+    </style>
 
 </head>
 <body onload="LoadSuggestions(); CheckAdmin();">
-    This is the Suggestions page <a href="#" onclick="LogOff()">logoff</a>
-    <div class="SubmitPanel">
+    <div class="homeBar">
+        Devil's Suggestion
+        <a href="#" onclick="LogOff()">logoff</a>
+    </div>
+    <section class="SubmitPanel">
         <form onsubmit="NewSuggestion($('#title').val(), $('#desc').val() , $('#category').val()); return false;">
-            <hr />
             <div>
                 Category of Suggestion: <input type="text" size="20" id="category" />
             </div>
@@ -267,13 +300,12 @@
             <div>
                 Suggestion Details: <input type="text" size="200" id="desc" />
             </div>
-            <hr />
             <div>
                 <button type="submit">Submit Suggestion</button>
                 <br><br>
             </div>
         </form>
-    </div>
+    </section>
 
     <div id="suggestionsPanel" class="contentPanel">
         <div class="left">Current Suggestions</div><hr />
