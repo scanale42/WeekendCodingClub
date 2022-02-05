@@ -276,10 +276,17 @@
             background: #FFC627;
             height: 70vh;
             width: 30vw;
+            margin-top: 100px;
         }
 
         #category {
             background: #FFC627;
+        }
+        form {
+            padding: 10px;
+            background: #FFC627;
+            width: 28vw;
+            height: 28vh;
         }
     </style>
 
@@ -291,19 +298,28 @@
     </div>
     <section class="SubmitPanel">
         <form onsubmit="NewSuggestion($('#title').val(), $('#desc').val() , $('#category').val()); return false;">
-            <div>
-                Category of Suggestion: <input type="text" size="20" id="category" />
-            </div>
-            <div>
-                Title of Suggestion: <input type="text" size="50" id="title" />
-            </div>
-            <div>
-                Suggestion Details: <input type="text" size="200" id="desc" />
-            </div>
-            <div>
+            
+                Category of Suggestion: <br />
+            <select id="category">
+    <option>$$$$$$$$$$$$$</option>
+    <option>Option2</option>
+    <option>Option1</option>
+    <option>Option1</option>
+
+</select>
+            
+           <br>
+            <br>
+           
+                Suggestion Details: 
+            <br />
+            <textarea size="200" id="desc">
+            </textarea>
+            <br>
+           
                 <button type="submit">Submit Suggestion</button>
                 <br><br>
-            </div>
+            
         </form>
     </section>
 
