@@ -7,8 +7,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <!--YOUR OWN JAVASCRIPT CAN GO RIGHT HERE-->
-    <script type="text/javascript">
-        //passes account info to the server, to create an account request
+    <script type="text/javascript">//passes account info to the server, to create an account request
         function NewSuggestion(title, desc, category) {
             var webMethod = "ProjectServices.asmx/NewSuggestion";
             var parameters = "{\"title\":\"" + encodeURI(title) + "\",\"desc\":\"" + encodeURI(desc) + "\",\"category\":\"" + encodeURI(category) + "\"}";
@@ -241,10 +240,7 @@
 
             $("#adminPanel").css("visibility", "hidden");
             $("#adminLink").text("");
-        }
-
-
-    </script>
+        }</script>
 
 
 
@@ -255,92 +251,118 @@
             box-sizing: border-box;
             margin: 0;
             font-family: Arial;
-            background: #8C1D40;
         }
 
-        body, html {
+        body {
             height: 100vh;
             width: 100vw;
+            background-color: #8C1D40;
         }
 
         .homeBar {
             background: #FFC627;
             padding: 0;
             font-size: 26px;
-            height: 10vh;
+            height: 15vh;
             width: 100vw;
             text-align: center;
         }
 
-        .SubmitPanel {
-            background: #FFC627;
-            height: 70vh;
-            width: 30vw;
-            margin-top: 100px;
+        .container {
+            display: grid;
+            grid-template-columns: 30vw 70vw 0vw;
+            text-align: left;
         }
 
-        #category {
-            background: #FFC627;
+        h2 {
+            text-align: left;
+            font-weight: bold;
         }
+
+        .SubmitPanel, .adminContainer {
+            padding: 5px;
+            height: 70vh;
+            margin: 5px;
+            background-color: #FFC627;
+        }
+
+        .contentPanel {
+            padding: 10px;
+            margin: 5px;
+            height: fit-content;
+            background-color: #FFC627;
+        }
+
         form {
             padding: 10px;
             background: #FFC627;
             width: 28vw;
             height: 28vh;
         }
+
+        #category {
+            width: 25vw;
+        }
+
+        #desc {
+            width: 25vw;
+            height: 40vh;
+        }
+
+        .label {
+            background-color: #FFC627;
+            font-weight: bold;
+        }
+
+        #submit {
+        }
     </style>
-
 </head>
+
 <body onload="LoadSuggestions(); CheckAdmin();">
-    <div class="homeBar">
-        Devil's Suggestion
-        <a href="#" onclick="LogOff()">logoff</a>
-    </div>
-    <section class="SubmitPanel">
-        <form onsubmit="NewSuggestion($('#title').val(), $('#desc').val() , $('#category').val()); return false;">
-            
-                Category of Suggestion: <br />
-            <select id="category">
-    <option>$$$$$$$$$$$$$</option>
-    <option>Option2</option>
-    <option>Option1</option>
-    <option>Option1</option>
+    <header class="homeBar">
+        <h1>Devil's Suggestion</h1>
+        <a href="#" onclick="LogOff()">Log Off</a>
+    </header>
 
-</select>
-            
-           <br>
-            <br>
-           
-                Suggestion Details: 
-            <br />
-            <textarea size="200" id="desc">
-            </textarea>
-            <br>
-           
-                <button type="submit">Submit Suggestion</button>
+    <div class="container">
+        <div class="SubmitPanel">
+            <form onsubmit="NewSuggestion($('#title').val(), $('#desc').val() , $('#category').val()); return false;">
+                <label class="label">Category of Suggestion:</label><br>
+                <select name="category" id="category">
+                    <option value="money">Money</option>
+                    <option value="hr">Human Resources</option>
+                    <option value="employee">Employee</option>
+                    <option value="hours">Working Hours</option>
+                    <option value="other">Other</option>
+                </select>
                 <br><br>
-            
-        </form>
-    </section>
+                <label class="label">Suggestion Details:</label><br>
+                <textarea name="desc" id="desc" maxlength="500" required></textarea>
+                <br><br>
+                <button type="submit" id="submit">Submit Suggestion</button>
+            </form>
+        </div>
 
-    <div id="suggestionsPanel" class="contentPanel">
-        <div class="left">Current Suggestions</div><hr />
-        <div class="suggestionsBox" id="suggestionsBox"></div>
-        <br><br>
+        <main id="suggestionsPanel" class="contentPanel">
+            <h2> Current Suggestions</h2><hr>
+            <section class="suggestionsBox" id="suggestionsBox">
+                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolorem expedita quasi a, et id provident, accusantium placeat assumenda delectus, tempore est necessitatibus ex porro sapiente temporibus distinctio nulla facere quas!</p>
+                <br><br>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad voluptas modi cumque minima ipsam quaerat ipsa molestias, dolore, provident illo vero amet cum quis nostrum impedit itaque fugit rem consequuntur?</p>
+                <br><br>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos qui, cupiditate ipsa consequatur doloribus dignissimos alias magnam molestias ipsum repellat similique mollitia, asperiores optio minus, incidunt officiis unde eius dolore.</p>
+            </section>
+        </main>
+
+        <section id="adminPanel" class="adminContainer" style="visibility: hidden">
+            <a href="#" id="suggestionsLink" onclick="LoadUnapprovedSuggestions()">Review Suggesions</a><br>
+            <a href="#" id="suggestionsLink" onclick="LoadUnapprovedAccounts()">Review Account Requests</a><br>
+            <a href="#" id="suggestionsLink" onclick="LoadAccounts()">Manage Accounts</a><br>
+            <h2>Current Unapproved Suggestions</h2><hr>
+            <section class="unapprovedSuggestionsBox" id="unapprovedSuggestionsBox"></section>
+        </section>
     </div>
-    <div id="adminPanel" class="adminContainer" style="visibility: hidden">
-        <a href="#" id="suggestionsLink" onclick="LoadUnapprovedSuggestions()">Review Suggesions</a><br>
-        <a href="#" id="suggestionsLink" onclick="LoadUnapprovedAccounts()">Review Account Requests</a><br>
-        <a href="#" id="suggestionsLink" onclick="LoadAccounts()">Manage Accounts</a><br>
-        <div class="left">Current Unapproved Suggestions</div><hr />
-        <div class="unapprovedSuggestionsBox" id="unapprovedSuggestionsBox"></div>
-    </div>
-
-
-
-
 </body>
-
-</html >
-
+</html>
 
