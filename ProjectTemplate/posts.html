@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿<!DOCTYPE html>
 <html>
 <head>
@@ -306,6 +307,317 @@
             width: 21vw;
             height: 35vh;
             resize: none;
+=======
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Virtual Suggestion Box</title>
+    <!--DO NOT FORGET THIS SCRIPT TAG SO YOU CAN USE JQUERY!!!!!-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!--YOUR OWN JAVASCRIPT CAN GO RIGHT HERE-->
+    <script type="text/javascript">//passes account info to the server, to create an account request
+        function NewSuggestion(title, desc, category) {
+            var webMethod = "ProjectServices.asmx/NewSuggestion";
+            var parameters = "{\"title\":\"" + encodeURI(title) + "\",\"desc\":\"" + encodeURI(desc) + "\",\"category\":\"" + encodeURI(category) + "\"}";
+
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    //showPanel('logonPanel');
+                    alert("Suggestion pending approval by admins. You'll receive a notification when it has been reviewed. ");
+                },
+                error: function (e) {
+                    alert("boo...");
+                }
+            });
+        }
+
+        //an ajax to delete a suggestion post
+        function DeleteSuggestion(id) {
+            var webMethod = "ProjectServices.asmx/DeleteSuggestion";
+            var parameters = "{\"id\":\"" + encodeURI(id) + "\"}";
+
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    LoadUnapprovedSuggestions()
+                },
+                error: function (e) {
+                    alert("boo...");
+                }
+            });
+        }
+
+        //an ajax to approve a suggestion
+        function ApproveSuggestion(id) {
+            var webMethod = "ProjectServices.asmx/ApproveSuggestion";
+            var parameters = "{\"id\":\"" + encodeURI(id) + "\"}";
+
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    LoadUnapprovedSuggestions();
+                    LoadSuggestions();
+                },
+                error: function (e) {
+                    alert("boo...");
+                }
+            });
+        }
+
+        //an ajax to approve a suggestion
+        function CheckAdmin() {
+            var webMethod = "ProjectServices.asmx/IsAdmin";
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.d) {
+                        ShowMenu();
+                        alert("Admin");
+                    }
+                    else {
+                        alert("Not an Admin");
+                    }
+
+                },
+            });
+        }
+
+        //this function grabs all the unapproved suggestions and displays them
+        function LoadUnapprovedSuggestions() {
+            var webMethod = "ProjectServices.asmx/GetUnapprovedSuggestions";
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.d.length > 0) {
+                        suggestionsArray = msg.d;
+                        //this clears out the div that will hold our suggestion info. Not sure if this is in use any more.
+                        $("#unapprovedSuggestionsBox").empty();
+                        admin = false;
+                        for (var i = 0; i < suggestionsArray.length; i++) {
+                            var suggestion;
+
+                            suggestion = "<div class='suggestionRow' id='suggestion'><button onclick=\"ApproveSuggestion(" + suggestionsArray[i].id + ")\">Approve</button><button onclick=\"DenySuggestion(" +
+                                suggestionsArray[i].id + ")\">Deny</button> <b>Category: </b> " + suggestionsArray[i].category + " <b>Title:</b> " +
+                                suggestionsArray[i].title + " <b> Details:</b> " + suggestionsArray[i].desc + "</div><br><br>"
+                            $("#unapprovedSuggestionsBox").append(
+                                suggestion
+                            );
+                        }
+                    }
+                },
+                error: function (e) {
+                    alert("Something unexpected happened.You've been eaten by a grue.");
+                }
+            });
+        }
+
+        //this function grabs all the approved suggestions and displays them
+        function LoadSuggestions() {
+            var webMethod = "ProjectServices.asmx/LoadSuggestions";
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.d.length > 0) {
+                        suggestionsArray = msg.d;
+                        //this clears out the div that will hold our suggestion info. Not sure if this is in use any more.
+                        $("#suggestionsBox").empty();
+                        admin = false;
+                        for (var i = 0; i < suggestionsArray.length; i++) {
+                            var suggestion;
+
+                            suggestion = "<div class='suggestionRow' id='suggestion'><b>Category: </b> " + suggestionsArray[i].category + " <b>Title:</b> " +
+                                suggestionsArray[i].title + " <b> Details:</b> " + suggestionsArray[i].desc + "</div><br><br>"
+                            $("#suggestionsBox").append(
+                                suggestion
+                            );
+                        }
+
+                    }
+                },
+                error: function (e) {
+                    alert("Something unexpected happened.You've been eaten by a grue.");
+                }
+            });
+        }
+
+        //this function grabs all the unapproved accounts and displays them
+        function LoadUnapprovedAccounts() {
+            var webMethod = "ProjectServices.asmx/GetUnapprovedAccounts";
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.d.length > 0) {
+                        accountsArray = msg.d;
+                        //this clears out the div that will hold our suggestion info. Not sure if this is in use any more.
+                        $("#unapprovedSuggestionsBox").empty();
+                        admin = false;
+                        for (var i = 0; i < accountsArray.length; i++) {
+                            var account;
+
+                            account = "<div class='accountRow' id='account'><button onclick=\"ApproveAccount(" + accountsArray[i].id + ")\">Approve</button><button onclick=\"DenyAccount(" +
+                                accountsArray[i].id + ")\">Deny</button> <b>First Name </b> " + accountsArray[i].firstName + " <b>Last Name:</b> " +
+                                accountsArray[i].lastName + " <b> Username: </b> " + accountsArray[i].userName + "</div><br><br>"
+                            $("#unapprovedSuggestionsBox").append(
+                                account
+                            );
+                        }
+                    }
+                },
+                error: function (e) {
+                    alert("Something unexpected happened.You've been eaten by a grue.");
+                }
+            });
+        }
+
+
+        //an ajax to delete a suggestion post
+        function DenyAccount(id) {
+            var webMethod = "ProjectServices.asmx/DenyAccount";
+            var parameters = "{\"id\":\"" + encodeURI(id) + "\"}";
+
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    LoadUnapprovedAccounts()
+                },
+                error: function (e) {
+                    alert("boo...");
+                }
+            });
+        }
+
+        //an ajax to approve a suggestion
+        function ApproveAccount(id) {
+            var webMethod = "ProjectServices.asmx/ApproveAccount";
+            var parameters = "{\"id\":\"" + encodeURI(id) + "\"}";
+
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    LoadUnapprovedAccounts();
+                },
+                error: function (e) {
+                    alert("boo...");
+                }
+            });
+        }
+
+
+        //This function shows the admin menu
+        function ShowMenu() {
+
+            $("#adminPanel").css("visibility", "visible");
+        }
+
+
+        //just hides the menu
+        function HideMenu() {
+
+            $("#adminPanel").css("visibility", "hidden");
+            $("#adminLink").text("");
+        }</script>
+
+
+
+    <!--END OF YOUR OWN JAVASCRIPT-->
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            font-family: Arial;
+        }
+
+        body {
+            height: 100vh;
+            width: 100vw;
+            background-color: #8C1D40;
+        }
+
+        .homeBar {
+            background: #FFC627;
+            padding: 0;
+            font-size: 26px;
+            height: 15vh;
+            width: 100vw;
+            text-align: center;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 25vw 50vw 25vw;
+            text-align: left;
+        }
+
+        h2 {
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .SubmitPanel, .adminContainer {
+            padding: 5px;
+            height: fit-content;
+            margin: 5px;
+            background-color: #FFC627;
+        }
+
+        .contentPanel {
+            padding: 10px;
+            margin: 5px;
+            height: fit-content;
+            background-color: #FFC627;
+        }
+
+        form {
+            padding: 10px;
+            background: #FFC627;
+
+        }
+
+        #category {
+            width: 21vw;
+        }
+
+        #desc {
+            width: 21vw;
+            height: 35vh;
+            resize: none;
+>>>>>>> dcEdits
         }
 
         .label {
