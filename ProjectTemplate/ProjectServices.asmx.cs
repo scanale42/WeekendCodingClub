@@ -99,9 +99,7 @@ namespace ProjectTemplate
             sqlDa.Fill(sqlDt);
             //check to see if any rows were returned.  If they were, it means it's 
             //a legit account
-
-            if (sqlDt.Rows.Count > 0)
-            
+            if (sqlDt.Rows.Count > 0)     
             {
                 //if we found an account, store the id and admin status in the session
                 //so we can check those values later on other method calls to see if they 
