@@ -127,17 +127,16 @@ namespace ProjectTemplate
 
         //Posting a new suggestion
         [WebMethod(EnableSession = true)]
-        public void NewSuggestion(string title, string desc, string category)
+        public void NewSuggestion(string desc, string category)
         {
             int userID = Convert.ToInt32(Session["id"]);
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
-            string sqlSelect = "insert into suggestions (title, `desc`, submitter, approved, status, category) " +
-            "values(@titleValue, @descValue, @userID, 0, 0, @category); SELECT LAST_INSERT_ID();";
+            string sqlSelect = "insert into suggestions (`desc`, submitter, approved, status, category) " +
+            "values(@descValue, @userID, 0, 0, @category); SELECT LAST_INSERT_ID();";
 
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
             MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
 
-            sqlCommand.Parameters.AddWithValue("@titleValue", HttpUtility.UrlDecode(title));
             sqlCommand.Parameters.AddWithValue("@descValue", HttpUtility.UrlDecode(desc));
             sqlCommand.Parameters.AddWithValue("@userID", userID);
             sqlCommand.Parameters.AddWithValue("@category", category);
@@ -162,7 +161,7 @@ namespace ProjectTemplate
                 DataTable sqlDt = new DataTable("suggestions");
 
                 string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
-                string sqlSelect = "select id, title, `desc`, submitter, category from suggestions where approved=0 order by id";
+                string sqlSelect = "select id, `desc`, submitter, category from suggestions where approved=0 order by id";
 
                 MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
                 MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
@@ -177,7 +176,6 @@ namespace ProjectTemplate
                     suggestions.Add(new Suggestion
                     {
                         id = Convert.ToInt32(sqlDt.Rows[i]["id"]),
-                        title = sqlDt.Rows[i]["title"].ToString(),
                         desc = sqlDt.Rows[i]["desc"].ToString(),
                         submitter = sqlDt.Rows[i]["submitter"].ToString(),
                         category = sqlDt.Rows[i]["category"].ToString()
@@ -201,7 +199,7 @@ namespace ProjectTemplate
             DataTable sqlDt = new DataTable("suggestions");
 
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
-            string sqlSelect = "select id, title, `desc`, submitter, category from suggestions where approved=1 order by id";
+            string sqlSelect = "select id, `desc`, submitter, category from suggestions where approved=1 order by id";
 
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
             MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
@@ -216,7 +214,6 @@ namespace ProjectTemplate
                 suggestions.Add(new Suggestion
                 {
                     id = Convert.ToInt32(sqlDt.Rows[i]["id"]),
-                    title = sqlDt.Rows[i]["title"].ToString(),
                     desc = sqlDt.Rows[i]["desc"].ToString(),
                     submitter = sqlDt.Rows[i]["submitter"].ToString(),
                     category = sqlDt.Rows[i]["category"].ToString()
