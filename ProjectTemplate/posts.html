@@ -28,6 +28,32 @@
             });
         }
 
+        //logs the user off both at the client and at the server
+        function LogOff() {
+
+            var webMethod = "ProjectServices.asmx/LogOff";
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.d) {
+                        //we logged off, so go back to logon page,
+                        //stop checking messages
+                        //and clear the chat panel
+                        window.open("index.html", "_self")
+                        HideMenu();
+                    }
+                    else {
+                    }
+                },
+                error: function (e) {
+                    alert("boo...");
+                }
+            });
+        }
+
         //an ajax to delete a suggestion post
         function DeleteSuggestion(id) {
             var webMethod = "ProjectServices.asmx/DeleteSuggestion";
@@ -397,72 +423,3 @@
     </div>
 </body>
 </html>
-
-=======
-        }
-
-        .label {
-            background-color: #FFC627;
-            font-weight: bold;
-        }
-
-        hr {
-            border: 1px solid white;
-            margin: 5px 0;
-        }
-
-        button {
-            background: #8C1D40;
-            color: white;
-            border: none;
-            padding: 1vh;
-        }
-
-    </style>
-</head>
-
-<body onload="LoadSuggestions(); CheckAdmin();">
-    <header class="homeBar">
-        <h1>Devil's Suggestion</h1>
-        <a href="#" onclick="LogOff()">Log Off</a>
-    </header>
-
-    <div class="container">
-        <div class="SubmitPanel">
-            <form onsubmit="NewSuggestion($('#desc').val() , $('#category').val()); return false;">
-                <label class="label">Category of Suggestion:</label><br>
-                <select name="category" id="category">
-                    <option value="Money">Money</option>
-                    <option value="Human Resources">Human Resources</option>
-                    <option value="Employee">Employee</option>
-                    <option value="Hours">Working Hours</option>
-                    <option value="Other">Other</option>
-                </select>
-                <br><br>
-                <label class="label">Suggestion Details:</label><br>
-                <textarea name="desc" id="desc" maxlength="500" required></textarea>
-                <br><br>
-                <button type="submit" id="submit">Submit Suggestion</button>
-            </form>
-        </div>
-
-        <main id="suggestionsPanel" class="contentPanel">
-            <h2> Current Suggestions</h2><hr>
-            <section class="suggestionsBox" id="suggestionsBox">
-               
-            </section>
-        </main>
-
-        <section id="adminPanel" class="adminContainer" style="visibility: hidden">
-            <a href="#" id="suggestionsLink" onclick="LoadUnapprovedSuggestions()">Review Suggesions</a><br>
-            <a href="#" id="suggestionsLink" onclick="LoadUnapprovedAccounts()">Review Account Requests</a><br>
-            <a href="#" id="suggestionsLink" onclick="LoadAccounts()">Manage Accounts</a><br><br>
-            <h4>Current Unapproved Suggestions</h4><hr>
-            <section class="unapprovedSuggestionsBox" id="unapprovedSuggestionsBox"></section>
-        </section>
-
-    </div>
-</body>
-</html>
-
->>>>>>> dcEdits
