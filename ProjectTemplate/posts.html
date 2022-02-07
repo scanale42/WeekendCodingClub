@@ -55,8 +55,8 @@
         }
 
         //an ajax to delete a suggestion post
-        function DeleteSuggestion(id) {
-            var webMethod = "ProjectServices.asmx/DeleteSuggestion";
+        function DenySuggestion(id) {
+            var webMethod = "ProjectServices.asmx/DenySuggestion";
             var parameters = "{\"id\":\"" + encodeURI(id) + "\"}";
 
             $.ajax({
