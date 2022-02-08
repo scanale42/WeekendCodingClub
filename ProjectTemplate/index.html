@@ -59,27 +59,70 @@
 
 	<!--AND YOUR OWN CSS CAN GO HERE AS WELL-->
 	<style>
+        body {
+            height: 100vh;
+            width: 100vw;
+            background-color: #8C1D40;
+        }
+
+        .homeBar {
+            background: #FFC627;
+            padding: 0;
+            font-size: 26px;
+            height: 15vh;
+            width: 100vw;
+            text-align: center;
+        }
+
+        input {
+            margin: auto;
+            padding: 10px;
+            width: 250px;
+        }
+
+        form {
+            text-align: center;
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px;
+            width: 100px;
+        }
+
+        p {
+            text-align: center;
+            color: white;
+            font-size: 12pt;
+        }
+
+        a {
+            color: white;
+        }
 
 	</style>
 	<!--END OF YOUR OWN CSS-->
 </head >
 <body>
+    <header class="homeBar">
+        <h1>Devil's Suggestion</h1>
+    </header>
     <div id="logonPanel" class="contentPanel logonPanel">
         <div class="logonBox">
             <form onsubmit="LogOn($('#logonId').val(), $('#logonPassword').val()); return false;">
                 <hr />
                 <div>
-                    Username: <input type="text" id="logonId" />
+                    <input type="text" id="logonId" placeholder="Username" required/>
                 </div>
                 <div>
-                    Password: <input type="password" id="logonPassword" />
+                    <input type="password" id="logonPassword" placeholder="Password" required/>
                 </div>
                 <hr />
                 <div>
                     <button type="submit">Logon</button>
                 </div>
             </form>
-
+            <p>Don't have an account? <a href="signup.html">Sign Up Here</a></p>
         </div>
     </div>
 </body>

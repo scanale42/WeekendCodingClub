@@ -1,60 +1,127 @@
 ﻿<!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8" />
-    <title>Sign Up Page</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <head>
+        <meta charset="utf-8" />
+        <title>Sign Up Page</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-    <script type="text/javascript">
-        function NewAccountRequest() {
-            var webMethod = "ProjectServices.asmx/NewAccountRequest";
-            var parameters = "{\"firstName\":\"" + encodeURI(firstName) + "\",\"lastName\":\"" + encodeURI(lastName) + "\",\"userName\":\"" + encodeURI(userName) +
-                "\",\"emailAddress\":\"" + encodeURI(emailAddress) + "\",\"pwd\":\"" + encodeURI(pwd) + "\"}";
 
-            //jQuery ajax method
-            $.ajax({
-                type: "POST",
-                url: webMethod,
-                data: parameters,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (msg) {
-                    alert("New account request pending approval by admins. You'll receive a notification when it has been reviewed.");
-                },
-                error: function (err) {
-                    alert("boo...");
-                }
-            });
-        }
-    </script>
-</head>
-<body>
-    <main>
-        <form onsubmit="NewAccountRequest($('#firstName').val(), $('#lastName').val(), $('#userName').val(), $('#emailAddress').val(), $('pwd').val()); return false;">
-            <h1>Create New Account</h1>
-            <div>Please complete the following information:</div>
-            <br />
-            <label for="firstName">First Name:</label>
-            <input type="text" name="firstName" id="firstName" />
-            <br />
-            <label for="lastName">Last Name:</label>
-            <input type="text" name="lastName" id="lastName" />
-            <br />
-            <label for="userName">User Name:</label>
-            <input type="text" name="userName" id="userName" />
-            <br />
-            <label for="emailAddress">Email Address:</label>
-            <input type="text" name="emailAddress" id="emailAddress" />
-            <br />
-            <label for="pwd">Password:</label>
-            <input type="text" name="pwd" id="pwd" />
-            <br />
-            <br />
-            <input type="reset" />
-            <button type="submit">Submit</button>
+        <script type="text/javascript">
+            function NewAccountRequest(firstName, lastName, userName, emailAddress, pwd) {
+                var webMethod = "ProjectServices.asmx/NewAccountRequest";
+                var parameters = "{\"firstName\":\"" + encodeURI(firstName) + "\",\"lastName\":\"" + encodeURI(lastName) + "\",\"userName\":\"" + encodeURI(userName) +
+                    "\",\"emailAddress\":\"" + encodeURI(emailAddress) + "\",\"pwd\":\"" + encodeURI(pwd) + "\"}";
 
-        </form>
-    </main>
+                //jQuery ajax method
+                $.ajax({
+                    type: "POST",
+                    url: webMethod,
+                    data: parameters,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (msg) {
+                        alert("New account request pending approval by admins. You'll receive a notification when it has been reviewed.");
+                    },
+                    error: function (err) {
+                        alert("boo...");
+                    }
+                });
+            }
+        </script>
+
+        <style>
+            body {
+                box-sizing:         border-box;
+                height:             100vh;
+                width:              100vw;
+                background-color:   #8C1D40;
+            }
+
+            .homeBar {
+                background:         #FFC627;
+                padding:            0;
+                font-size:          26px;
+                height:             15vh;
+                width:              100vw;
+                text-align:         center;
+            }
+
+            button {
+                margin:             10px;
+                padding:            10px;
+                width:              100px;
+            }
+
+            table {
+                margin:             auto;
+            }
+
+            input {
+                padding:            10px;
+                width:              250px;
+            }
+
+            .container {
+                display:            grid;
+                text-align:         center;
+                padding:            10px;
+                height:             fit-content;
+                margin:             10px 0 0 10px;
+                background-color:   #FFC627;
+                border:             solid white 1px
+            }
+
+            footer {
+                text-align:         center;
+                padding:            10px;
+            }
+
+            a {
+                color:              white;
+                font-size:          12pt;
+            }
+        
+        </style>
+    </head>
+
+    <body>
+        <header class="homeBar">
+            <h1>Devil's Suggestion</h1>
+        </header>
+        <main>
+            <div class="container">
+                <form onsubmit="NewAccountRequest($('#firstName').val(), $('#lastName').val(), $('#userName').val(), $('#emailAddress').val(), $('#pwd').val()); return false;">
+                    <h1>Create New Account</h1>
+                    <table>
+                        <tr>
+                            <td>Please complete the following information:<br /></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" id="firstName" placeholder="First Name" required /></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" id="lastName" placeholder="Last Name" required /></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" id="userName" placeholder="User Name" required /></td>
+                        </tr>
+                        <tr>
+                            <td><input type="email" id="emailAddress" placeholder="Email Address" required /></td>
+                        </tr>
+                        <tr>
+                            <td><input type="password" id="pwd" placeholder="Password" minlength="10" required /></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button type="reset">Reset</button>
+                                <button type="submit">Submit</button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+            <footer><a href="index.html">Return Home</a></footer>
+        </main>
     
-</body>
+    </body>
 </html>
