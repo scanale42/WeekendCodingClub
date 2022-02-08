@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Sign Up Page</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <script type="text/javascript">
+        function NewAccountRequest() {
+            var webMethod = "ProjectServices.asmx/NewAccountRequest";
+            var parameters = "{\"firstName\":\"" + encodeURI(firstName) + "\",\"lastName\":\"" + encodeURI(lastName) + "\",\"userName\":\"" + encodeURI(userName) +
+                "\",\"emailAddress\":\"" + encodeURI(emailAddress) + "\",\"pwd\":\"" + encodeURI(pwd) + "\"}";
+
+            //jQuery ajax method
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    alert("New account request pending approval by admins. You'll receive a notification when it has been reviewed.");
+                },
+                error: function (err) {
+                    alert("boo...");
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <main>
+        <form onsubmit="NewAccountRequest($('#firstName').val(), $('#lastName').val(), $('#userName').val(), $('#emailAddress').val(), $('pwd').val()); return false;">
+            <h1>Create New Account</h1>
+            <div>Please complete the following information:</div>
+            <br />
+            <label for="firstName">First Name:</label>
+            <input type="text" name="firstName" id="firstName" />
+            <br />
+            <label for="lastName">Last Name:</label>
+            <input type="text" name="lastName" id="lastName" />
+            <br />
+            <label for="userName">User Name:</label>
+            <input type="text" name="userName" id="userName" />
+            <br />
+            <label for="emailAddress">Email Address:</label>
+            <input type="text" name="emailAddress" id="emailAddress" />
+            <br />
+            <label for="pwd">Password:</label>
+            <input type="text" name="pwd" id="pwd" />
+            <br />
+            <br />
+            <input type="reset" />
+            <button type="submit">Submit</button>
+
+        </form>
+    </main>
+    
+</body>
+</html>

@@ -12,5 +12,6 @@ namespace ProjectTemplate
         public string lastName;
         public string userName;
         public string emailAddress;
+        public string password;
     }
 }

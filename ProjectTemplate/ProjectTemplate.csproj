@@ -95,6 +95,7 @@
     <Content Include="posts.html" />
     <Content Include="index.html" />
     <Content Include="ProjectServices.asmx" />
+    <Content Include="signup.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
