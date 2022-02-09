@@ -177,7 +177,7 @@
                     }
                 },
                 error: function (e) {
-                    alert("Something unexpected happened.You've been eaten by a grue.");
+                    alert("Something unexpected happened. You've been eaten by a grue.");
                 }
             });
         }
@@ -217,7 +217,7 @@
                     }
                 },
                 error: function (e) {
-                    alert("Something unexpected happened.You've been eaten by a grue.");
+                    alert("Something unexpected happened. You've been eaten by a grue.");
                 }
             });
         }
@@ -240,7 +240,7 @@
                         for (var i = 0; i < suggestionsArray.length; i++) {
                             var suggestion;
 
-                            suggestion = "<div class='suggestionRow' id='suggestion'><b>Category: </b> " + suggestionsArray[i].category + " <b> Details:</b> " + suggestionsArray[i].desc + "</div><br>"
+                            suggestion = "<div class='suggestionRow' id='suggestion'> <div class='postCat'>" + suggestionsArray[i].category + "</div> <div class='postDetails'>" + suggestionsArray[i].desc + "</div> <button class='upvote'>&#9825</button></div>"
                             $("#suggestionsBox").append(
                                 suggestion
                             );
@@ -249,7 +249,7 @@
                     }
                 },
                 error: function (e) {
-                    alert("Something unexpected happened.You've been eaten by a grue.");
+                    alert("Something unexpected happened. You've been eaten by a grue.");
                 }
             });
         }
@@ -292,7 +292,7 @@
    
                 },
                 error: function (e) {
-                    alert("Something unexpected happened.You've been eaten by a grue.");
+                    alert("Something unexpected happened. You've been eaten by a grue.");
                 }
             });
         }
@@ -413,7 +413,6 @@
         .contentPanel {
             padding: 10px;
             height: fit-content;
-            border: solid white 1px;
         }
 
         #suggestionsPanel {
@@ -424,9 +423,8 @@
         .suggestionRow {
             height: fit-content;
             padding: 2vh;
-            
+            margin-bottom: 2vh;
             background-color: #FFC627;
-            border: solid white 1px;
         }
 
         form {
@@ -435,13 +433,15 @@
         }
 
         #category {
-            width: 21vw;
+            width: 20vw;
+            border: none;
         }
 
         #desc {
-            width: 21vw;
+            width: 20vw;
             height: 35vh;
             resize: none;
+            border: none;
         }
  
         .label {
@@ -454,15 +454,58 @@
             margin: 5px 0;
         }
 
+        #topPost {
+            background: #FFF;
+            color: #8C1D40;
+            font: bold 20px Arial;
+            padding: 3px;
+            width: 130px;
+            border: 6px ridge #FFC627;
+            border-right: 6px groove #FFC627;
+            border-bottom: 2px groove #FFC627;
+            text-align: center;
+        }
+
+        .postCat {
+            float: right;
+            background: #FFF;
+            padding: 8px;
+            border-radius: 10px;
+        }
+
+        .postDetails {
+            font-size: 20px;
+        }
+
+        .upvote {
+            background-color: #FFC627;
+            color: #8C1D40;
+            padding: 0px;
+            font-size: 200%;
+            font-weight: bold;
+            margin: 0px;
+            border-radius: 10px;
+        }
+
         button {
             background: #8C1D40;
             color: white;
             border: none;
             padding: 1vh;
+            margin: auto;
+            cursor: pointer;
+        }
+
+        #newPost {
+            background: #FFF;
+            padding: 15px;
+            margin-bottom: 5px;
+            font-weight: bold;
+            text-align: center;
         }
 
         
-    </style>S
+    </style>
 </head>
 
 <body onload="LoadSuggestions(); CheckAdmin();">
@@ -473,6 +516,7 @@
 
     <div class="container">
         <div class="SubmitPanel">
+            <div id="newPost">Create New Post</div>
             <form onsubmit="NewSuggestion($('#desc').val() , $('#category').val()); return false;">
                 <label class="label">Category of Suggestion:</label><br>
                 <select name="category" id="category">
@@ -492,14 +536,15 @@
 
         <main id="suggestionsPanel" class="contentPanel">
             <h2 id="middlePanelTitle"> Current Suggestions</h2><hr>
+            <h3 id="topPost">Top Post</h3>
             <section class="suggestionsBox" id="suggestionsBox">
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolorem expedita quasi a, et id provident, accusantium placeat assumenda delectus, tempore est necessitatibus ex porro sapiente temporibus distinctio nulla facere quas!</p>
-                <br><br>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad voluptas modi cumque minima ipsam quaerat ipsa molestias, dolore, provident illo vero amet cum quis nostrum impedit itaque fugit rem consequuntur?</p>
-                <br><br>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos qui, cupiditate ipsa consequatur doloribus dignissimos alias magnam molestias ipsum repellat similique mollitia, asperiores optio minus, incidunt officiis unde eius dolore.</p>
             </section>
         </main>
+
+        <div id="filterPanel">
+            <div id="filterTitle">Filters</div>
+
+        </div>
 
         <section id="adminPanel" class="adminContainer" style="visibility: hidden">
             <a href="#" id="suggestionsLink" onclick="LoadUnapprovedSuggestions()">Review Suggesion Requests</a><br>
