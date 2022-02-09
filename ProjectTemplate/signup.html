@@ -7,6 +7,39 @@
 
 
         <script type="text/javascript">
+
+            function ValidateAccountRequest(userName, emailAddress) {
+                var webMethod = "ProjectServices.asmx/ValidateAccountRequest";
+                var parameters = "{\"userName\":\"" + encodeURI(userName) + "\",\"emailAddress\":\"" + encodeURI(emailAddress) + "\"}";
+
+                //jQuery ajax method
+                $.ajax({
+                    type: "POST",
+                    url: webMethod,
+                    data: parameters,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (msg) {
+                        
+                        if (msg.d) {
+                            var fn = document.getElementById('firstName').value;
+                            var ln = document.getElementById('lastName').value;
+                            var un = document.getElementById('userName').value;
+                            var ea = document.getElementById('emailAddress').value;
+                            var pw = document.getElementById('pwd').value;
+                            NewAccountRequest(fn, ln, un, ea, pw);
+                        }
+                        else {
+                            alert("The username or email address is already in use. Please try again.");
+                            document.getElementById("signUpForm").reset();
+                        }
+                    },
+                    error: function (e) {
+                        alert("Something unexpected happened. You've been eaten by a grue.");
+                    }
+                });
+            }
+
             function NewAccountRequest(firstName, lastName, userName, emailAddress, pwd) {
                 var webMethod = "ProjectServices.asmx/NewAccountRequest";
                 var parameters = "{\"firstName\":\"" + encodeURI(firstName) + "\",\"lastName\":\"" + encodeURI(lastName) + "\",\"userName\":\"" + encodeURI(userName) +
@@ -21,6 +54,7 @@
                     dataType: "json",
                     success: function (msg) {
                         alert("New account request pending approval by admins. You'll receive a notification when it has been reviewed.");
+                        document.getElementById("signUpForm").reset();
                     },
                     error: function (err) {
                         alert("boo...");
@@ -30,57 +64,66 @@
         </script>
 
         <style>
+            * {
+                box-sizing:                 border-box;
+                margin:                     0;
+                border:                     none;
+                font-family:                Arial;
+            }
+
             body {
-                box-sizing:         border-box;
-                height:             100vh;
-                width:              100vw;
-                background-color:   #8C1D40;
+                height:                     100vh;
+                width:                      100vw;
+                background-color:           #8C1D40;
             }
 
             .homeBar {
-                background:         #FFC627;
-                padding:            0;
-                font-size:          26px;
-                height:             15vh;
-                width:              100vw;
-                text-align:         center;
+                background:                 #FFC627;
+                padding:                    0;
+                font-size:                  26px;
+                height:                     15vh;
+                width:                      100vw;
+                text-align:                 center;
             }
 
             button {
-                margin:             10px;
-                padding:            10px;
-                width:              100px;
+                margin:                     10px;
+                padding:                    10px;
+                width:                      100px;
             }
 
             table {
-                margin:             auto;
+                margin:                     auto;
             }
 
             input {
-                padding:            10px;
-                width:              250px;
+                padding:                    10px;
+                width:                      250px;
             }
 
             .container {
-                display:            grid;
-                text-align:         center;
-                padding:            10px;
-                height:             fit-content;
-                margin:             10px 0 0 10px;
-                background-color:   #FFC627;
-                border:             solid white 1px
+                display:                    grid;
+                text-align:                 center;
+                padding:                    10px;
+                margin-top:                 10px;
+                height:                     fit-content;
+                background-color:           #FFC627;
+                border:                     solid white 1px
             }
 
             footer {
-                text-align:         center;
-                padding:            10px;
+                text-align:                 center;
+                padding:                    10px;
+            }
+
+            input, button {
+                border:                     1px solid black;
             }
 
             a {
-                color:              white;
-                font-size:          12pt;
+                color:                      white;
+                font-size:                  12pt;
             }
-        
         </style>
     </head>
 
@@ -90,7 +133,7 @@
         </header>
         <main>
             <div class="container">
-                <form onsubmit="NewAccountRequest($('#firstName').val(), $('#lastName').val(), $('#userName').val(), $('#emailAddress').val(), $('#pwd').val()); return false;">
+                <form id="signUpForm" onsubmit="ValidateAccountRequest($('#userName').val(), $('#emailAddress').val()); return false;">
                     <h1>Create New Account</h1>
                     <table>
                         <tr>
