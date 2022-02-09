@@ -155,6 +155,45 @@
             });
         }
 
+        //this function Loads all the suggestions with some editing options
+        function ManageSuggestions() {
+            var webMethod = "ProjectServices.asmx/LoadSuggestions";
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.d.length > 0) {
+                        suggestionsArray = msg.d;
+                        //Clears the box
+                        $("#suggestionsBox").empty();
+                        admin = false;
+                        for (var i = 0; i < suggestionsArray.length; i++) {
+                            var suggestion;
+
+                            suggestion = "<div class='suggestionRow'w id='suggestion'><button onclick=\"DenySuggestion(" +
+                                suggestionsArray[i].id + ")\">Delete</button> <b>Category: </b> " + suggestionsArray[i].category + " <b> Details:</b> " +
+                                suggestionsArray[i].desc + "</div><br><br>"
+                            $("#suggestionsBox").append(
+                                suggestion
+                            );
+                        }
+                    }
+                    else {
+                        message = "No suggestions to approve"
+                        $("#unapprovedSuggestionsBox").append(
+                            message
+                        );
+
+                    }
+                },
+                error: function (e) {
+                    alert("Something unexpected happened.You've been eaten by a grue.");
+                }
+            });
+        }
+
         //this function grabs all the approved suggestions and displays them
         function LoadSuggestions() {
             var webMethod = "ProjectServices.asmx/LoadSuggestions";
@@ -227,6 +266,8 @@
                 }
             });
         }
+
+
 
 
         //an ajax to delete a suggestion post
@@ -432,6 +473,7 @@
 
         <section id="adminPanel" class="adminContainer" style="visibility: hidden">
             <a href="#" id="suggestionsLink" onclick="LoadUnapprovedSuggestions()">Review Suggesions</a><br>
+            <a href="#" id="suggestionsLink" onclick="ManageSuggestions()">Manage Suggesions</a><br>
             <a href="#" id="suggestionsLink" onclick="LoadUnapprovedAccounts()">Review Account Requests</a><br>
             <a href="#" id="suggestionsLink" onclick="LoadAccounts()">Manage Accounts</a><br><br>
             <h2>Current Unapproved Suggestions</h2><hr>
