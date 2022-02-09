@@ -74,6 +74,33 @@
             });
         }
 
+        //an ajax to delete a suggestion post
+        function DeleteSuggestion(id) {
+            var webMethod = "ProjectServices.asmx/DenySuggestion";
+            var parameters = "{\"id\":\"" + encodeURI(id) + "\"}";
+            let confirmation;
+            if (confirm("Are you sure you want to delete the suggestion?") == true) {
+                text = "Deleting Post";
+                $.ajax({
+                    type: "POST",
+                    url: webMethod,
+                    data: parameters,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (msg) {
+                        ManageSuggestions()
+                    },
+                    error: function (e) {
+                        alert("boo...");
+                    }
+                });
+            } else {
+                text = "Deletion cancelled";
+            }
+
+
+        }
+
         //an ajax to approve a suggestion
         function ApproveSuggestion(id) {
             var webMethod = "ProjectServices.asmx/ApproveSuggestion";
@@ -87,7 +114,6 @@
                 dataType: "json",
                 success: function (msg) {
                     LoadUnapprovedSuggestions();
-                    LoadSuggestions();
                 },
                 error: function (e) {
                     alert("boo...");
@@ -128,7 +154,8 @@
                     if (msg.d.length > 0) {
                         suggestionsArray = msg.d;
                         //this clears out the div that will hold our suggestion info. Not sure if this is in use any more.
-                        $("#unapprovedSuggestionsBox").empty();
+                        $("#suggestionsBox").empty();
+                        middlePanelTitle.innerText = "Review Suggestions";
                         admin = false;
                         for (var i = 0; i < suggestionsArray.length; i++) {
                             var suggestion;
@@ -136,7 +163,7 @@
                             suggestion = "<div class='suggestionRow'w id='suggestion'><button onclick=\"ApproveSuggestion(" + suggestionsArray[i].id + ")\">Approve</button><button onclick=\"DenySuggestion(" +
                                 suggestionsArray[i].id + ")\">Deny</button> <b>Category: </b> " + suggestionsArray[i].category + " <b> Details:</b> " +
                                 suggestionsArray[i].desc + "</div><br><br>"
-                            $("#unapprovedSuggestionsBox").append(
+                            $("#suggestionsBox").append(
                                 suggestion
                             );
                         }
@@ -169,10 +196,11 @@
                         //Clears the box
                         $("#suggestionsBox").empty();
                         admin = false;
+                        middlePanelTitle.innerText = "Manage Suggestions";
                         for (var i = 0; i < suggestionsArray.length; i++) {
                             var suggestion;
 
-                            suggestion = "<div class='suggestionRow'w id='suggestion'><button onclick=\"DenySuggestion(" +
+                            suggestion = "<div class='suggestionRow'w id='suggestion'><button onclick=\"DeleteSuggestion(" +
                                 suggestionsArray[i].id + ")\">Delete</button> <b>Category: </b> " + suggestionsArray[i].category + " <b> Details:</b> " +
                                 suggestionsArray[i].desc + "</div><br><br>"
                             $("#suggestionsBox").append(
@@ -207,6 +235,7 @@
                         suggestionsArray = msg.d;
                         //this clears out the div that will hold our suggestion info. Not sure if this is in use any more.
                         $("#suggestionsBox").empty();
+                        middlePanelTitle.innerText = "Current Suggestions";
                         admin = false;
                         for (var i = 0; i < suggestionsArray.length; i++) {
                             var suggestion;
@@ -234,19 +263,20 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (msg) {
+
                     if (msg.d.length > 0) {
                         accountsArray = msg.d;
                         //this clears out the div that will hold our suggestion info. Not sure if this is in use any more.
-                        $("#unapprovedSuggestionsBox").empty();
-
+                        $("#suggestionsBox").empty();
+                        middlePanelTitle.innerText = "Review Accounts";
                         admin = false;
                         for (var i = 0; i < accountsArray.length; i++) {
                             var account;
 
-                            account = "<div class='accountRow' id='account'><button onclick=\"ApproveAccount(" + accountsArray[i].id + ")\">Approve</button><button onclick=\"DenyAccount(" +
+                            account = "<div class='suggestionRow' id='account'><button onclick=\"ApproveAccount(" + accountsArray[i].id + ")\">Approve</button><button onclick=\"DenyAccount(" +
                                 accountsArray[i].id + ")\">Deny</button> <b>First Name </b> " + accountsArray[i].firstName + " <b>Last Name:</b> " +
                                 accountsArray[i].lastName + " <b> Username: </b> " + accountsArray[i].userName + "</div><br><br>"
-                            $("#unapprovedSuggestionsBox").append(
+                            $("#suggestionsBox").append(
                                 account
                             );
                         }
@@ -447,7 +477,7 @@
                 <label class="label">Category of Suggestion:</label><br>
                 <select name="category" id="category">
                     <option value="Money">Money</option>
-                    <option value="Human Resources">Human Resources</option>
+                    <option value="HR">HR</option>
                     <option value="Employee">Employee</option>
                     <option value="Hours">Working Hours</option>
                     <option value="Other">Other</option>
@@ -461,7 +491,7 @@
         </div>
 
         <main id="suggestionsPanel" class="contentPanel">
-            <h2> Current Suggestions</h2><hr>
+            <h2 id="middlePanelTitle"> Current Suggestions</h2><hr>
             <section class="suggestionsBox" id="suggestionsBox">
                 <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolorem expedita quasi a, et id provident, accusantium placeat assumenda delectus, tempore est necessitatibus ex porro sapiente temporibus distinctio nulla facere quas!</p>
                 <br><br>
@@ -472,14 +502,15 @@
         </main>
 
         <section id="adminPanel" class="adminContainer" style="visibility: hidden">
-            <a href="#" id="suggestionsLink" onclick="LoadUnapprovedSuggestions()">Review Suggesions</a><br>
+            <a href="#" id="suggestionsLink" onclick="LoadUnapprovedSuggestions()">Review Suggesion Requests</a><br>
             <a href="#" id="suggestionsLink" onclick="ManageSuggestions()">Manage Suggesions</a><br>
             <a href="#" id="suggestionsLink" onclick="LoadUnapprovedAccounts()">Review Account Requests</a><br>
             <a href="#" id="suggestionsLink" onclick="LoadAccounts()">Manage Accounts</a><br><br>
-            <h2>Current Unapproved Suggestions</h2><hr>
-            <section class="unapprovedSuggestionsBox" id="unapprovedSuggestionsBox"></section>
+            <a href="#" id="suggestionsLink" onclick="LoadSuggestions()">Home</a><br><br>
+            <!--<h2>Current Unapproved Suggestions</h2><hr>
+        <section class="unapprovedSuggestionsBox" id="unapprovedSuggestionsBox"></section>-->
         </section>
 
-    </div>
-</body>
-</html>
+        </div>
+    </body>
+    </html>
