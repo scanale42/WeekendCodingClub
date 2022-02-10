@@ -281,7 +281,7 @@ namespace ProjectTemplate
 
         //Grabbing all of the Accounts that have not been approved yet. 
         [WebMethod(EnableSession = true)]
-        public Account[] GetUnapprovedAccounts()
+        public Account[] GetUnapprovedAccounts(string valueLookup)
         {
             if (Convert.ToInt32(Session["admin"]) == 1)
             {
@@ -388,13 +388,13 @@ namespace ProjectTemplate
 
         //Create a new account request
         [WebMethod(EnableSession = true)]
-        public void NewAccountRequest(string firstName, string lastName, string userName, string emailAddress, string pwd)
+        public void NewAccountRequest(string firstName, string lastName, string userName, string emailAddress, string pwd, string secQuestion, string secAnswer)
         {
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
             //the only thing fancy about this query is SELECT LAST_INSERT_ID() at the end.  All that
             //does is tell mySql server to return the primary key of the last inserted row.
-            string sqlSelect = "insert into Accounts (firstName, lastName, userName, pwd, emailAddress, logonStatus, admin, approved) " +
-                "values(@firstNameValue, @lastNameValue, @userNameValue, @pwdValue, @emailAddressValue, 0, 0, 0); SELECT LAST_INSERT_ID();";
+            string sqlSelect = "insert into Accounts (firstName, lastName, userName, pwd, emailAddress, logonStatus, admin, approved, secQuestion, secAnswer) " +
+                "values(@firstNameValue, @lastNameValue, @userNameValue, @pwdValue, @emailAddressValue, 0, 0, 0, @secQuestionValue, @secAnswerValue); SELECT LAST_INSERT_ID();";
 
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
             MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
@@ -404,6 +404,8 @@ namespace ProjectTemplate
             sqlCommand.Parameters.AddWithValue("@userNameValue", HttpUtility.UrlDecode(userName));
             sqlCommand.Parameters.AddWithValue("@pwdValue", HttpUtility.UrlDecode(pwd));
             sqlCommand.Parameters.AddWithValue("@emailAddressValue", HttpUtility.UrlDecode(emailAddress));
+            sqlCommand.Parameters.AddWithValue("@secQuestionValue", HttpUtility.UrlDecode(secQuestion));
+            sqlCommand.Parameters.AddWithValue("@secAnswerValue", HttpUtility.UrlDecode(secAnswer));
 
 
             //this time, we're not using a data adapter to fill a data table.  We're just
@@ -472,6 +474,88 @@ namespace ProjectTemplate
             //return the result!
             return success;
         }
+
+
+        //Veriffying the Account Exists. 
+        [WebMethod(EnableSession = true)]
+        public Account[] ValidateAccountExists(string valueLookup)
+        {
+            DataTable sqlDt = new DataTable("accounts");
+
+            string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+            string sqlSelect = "SELECT id, userName, emailAddress, secQuestion FROM Accounts WHERE userName=@userNameValue or emailAddress=@emailAddressValue";
+
+            MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+            MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+            sqlCommand.Parameters.AddWithValue("@userNameValue", HttpUtility.UrlDecode(valueLookup));
+            sqlCommand.Parameters.AddWithValue("@emailAddressValue", HttpUtility.UrlDecode(valueLookup));
+
+            MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+            sqlDa.Fill(sqlDt);
+
+            List<Account> account = new List<Account>();
+            for (int i = 0; i < sqlDt.Rows.Count; i++)
+            {
+
+                account.Add(new Account
+                {
+                    id = Convert.ToInt32(sqlDt.Rows[i]["id"]),
+                    userName = sqlDt.Rows[i]["userName"].ToString(),
+                    emailAddress = sqlDt.Rows[i]["emailAddress"].ToString(),
+                    secQuestion = sqlDt.Rows[i]["secQuestion"].ToString(),
+                });
+            }
+
+            //convert the list of suggestionsto an array and return!
+            return account.ToArray();
+        }
+
+        [WebMethod(EnableSession = true)] //NOTICE: gotta enable session on each individual method
+        public bool ValidateSecurityQuestion(string username, string answer, string password)
+        {
+            bool success = false;
+
+            //our connection string comes from our web.config file like we talked about earlier
+            string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+            //here's our query.  A basic select with nothing fancy.  Note the parameters that begin with @
+            string sqlSelect = "SELECT username, secAnswer FROM Accounts WHERE userName=@usernameValue and secAnswer=@answerValue";
+
+            MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+            MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+            sqlCommand.Parameters.AddWithValue("@usernameValue", HttpUtility.UrlDecode(username));
+            sqlCommand.Parameters.AddWithValue("@answerValue", HttpUtility.UrlDecode(answer));
+
+            MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+            DataTable sqlDt = new DataTable();
+            sqlDa.Fill(sqlDt);
+            if (sqlDt.Rows.Count > 0)
+            {
+                sqlSelect = "update Accounts set pwd=@pwdValue where userName=@usernameValue";
+                MySqlConnection sqlConnection2 = new MySqlConnection(sqlConnectString);
+                MySqlCommand sqlCommand2 = new MySqlCommand(sqlSelect, sqlConnection);
+                sqlCommand2.Parameters.AddWithValue("@usernameValue", HttpUtility.UrlDecode(username));
+                sqlCommand2.Parameters.AddWithValue("@pwdValue", HttpUtility.UrlDecode(password));
+
+
+                sqlConnection.Open();
+                try
+                {
+                    sqlCommand2.ExecuteNonQuery();
+                    success = true;
+                }
+                catch (Exception e)
+                {
+                }
+                sqlConnection.Close();
+
+
+            }
+            //return the result!
+            return success;
+        }
+
 
     }
 }

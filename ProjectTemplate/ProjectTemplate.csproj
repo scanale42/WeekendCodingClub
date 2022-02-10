@@ -92,6 +92,7 @@
   <ItemGroup>
     <Content Include="Global.asax" />
     <Content Include="admin.html" />
+    <Content Include="pwreset.html" />
     <Content Include="posts.html" />
     <Content Include="index.html" />
     <Content Include="ProjectServices.asmx" />

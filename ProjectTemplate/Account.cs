@@ -13,5 +13,6 @@ namespace ProjectTemplate
         public string userName;
         public string emailAddress;
         public string password;
+        public string secQuestion;
     }
 }

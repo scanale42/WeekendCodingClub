@@ -1,0 +1,235 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Sign Up Page</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+
+    <script type="text/javascript">
+
+        function ValidateAccountExists(valueLookup) {
+            var webMethod = "ProjectServices.asmx/ValidateAccountExists";
+            var parameters = "{\"valueLookup\":\"" + encodeURI(valueLookup) + "\"}"
+
+            //jQuery ajax method
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.d.length > 0) {
+                        accountsArray = msg.d;
+                        var secQuestion;
+                        var userName;
+                        for (var i = 0; i < accountsArray.length; i++) {
+                            secQuestion = accountsArray[i].secQuestion
+                            userName = accountsArray[i].userName
+                            document.getElementById('submitButton').style.visibility = 'hidden'
+                            var table = document.getElementById("tableTest");
+                            var row2 = table.insertRow(2);
+
+                            var row3 = table.insertRow(3);
+                            var cell31 = row3.insertCell(0);
+                            var cell32 = row3.insertCell(1);
+                            cell31.innerHTML = "Answer Your Security Question";
+
+                            var row4 = table.insertRow(4);
+                            var cell41 = row4.insertCell(0);
+                            var cell42 = row4.insertCell(1);
+
+                            var input = document.createElement("input");
+                            input.type = "text";
+                            input.id = "secAnswer";
+                            input.placeholder = secQuestion
+                            cell41.appendChild(input);
+
+
+                            var row5 = table.insertRow(5);
+                            var cell51 = row5.insertCell(0);
+                            var cell52 = row5.insertCell(1);
+
+
+                            var pwInput1 = document.createElement("input");
+                            pwInput1.type = "password";
+                            pwInput1.id = "pwInput1";
+                            pwInput1.placeholder = "Enter New Password"
+                            cell51.appendChild(pwInput1);
+
+                            var row6 = table.insertRow(6);
+                            var cell61 = row6.insertCell(0);
+                            var cell62 = row6.insertCell(1);
+
+                            var pwInput2 = document.createElement("input");
+                            pwInput2.type = "password";
+                            pwInput2.id = "pwInput2";
+                            pwInput2.placeholder = "Re-Enter New Password"
+                            cell61.appendChild(pwInput2);
+
+
+                            var button = document.createElement("input");
+                            button.type = "button";
+                            button.value = "Reset";
+                            button.name = "resetPassBut";
+                            button.addEventListener('click', () => { ResetPassword(userName) });
+                            button.style = "width:100px";
+                            cell62.appendChild(button);
+
+                      
+                       }
+
+                    }
+                    else {
+                        alert("No Account Found")
+
+                    }
+
+                },
+                error: function (e) {
+                    alert("Something unexpected happened. You've been eaten by a grue1.");
+                }
+            });
+        }
+
+
+        function ResetPassword(un) {
+            alert("here")
+            var pw1 = document.getElementById("pwInput1").value;
+            var pw2 = document.getElementById("pwInput2").value;
+            var answer = document.getElementById("secAnswer").value;
+            if (pw1 == pw2) {
+                var webMethod = "ProjectServices.asmx/ValidateSecurityQuestion";
+                var parameters = "{\"username\":\"" + encodeURI(un) + "\",\"answer\":\"" + encodeURI(answer) + "\",\"password\":\"" + encodeURI(pw1) +"\"}";
+                alert(parameters)
+                //jQuery ajax method
+                $.ajax({
+                    type: "POST",
+                    url: webMethod,
+                    data: parameters,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (msg) {
+                        if (msg.d) {
+                            alert("Password Changed Successfully.");
+                            window.open("index.html", "_self")
+                        }
+                        else {
+                            alert("Passwords do not match or security question answer is incorrect");
+                        }
+                    },
+                    error: function (e) {
+                        alert("Something unexpected happened. You've been eaten by a grue2.");
+                    }
+                });
+
+            }
+            else {
+                alert("Passwords do not match or security question answer is incorrect")
+            };
+
+
+        }
+
+
+
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            border: none;
+            font-family: Arial;
+        }
+
+        body {
+            height: 100vh;
+            width: 100vw;
+            background-color: #8C1D40;
+        }
+
+        .homeBar {
+            background: #FFC627;
+            padding: 0;
+            font-size: 26px;
+            height: 15vh;
+            width: 100vw;
+            text-align: center;
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px;
+            width: 100px;
+        }
+
+        table {
+            margin: auto;
+        }
+
+        input {
+            padding: 10px;
+            width: 250px;
+        }
+
+        .container {
+            display: grid;
+            text-align: center;
+            padding: 10px;
+            margin-top: 10px;
+            height: fit-content;
+            background-color: #FFC627;
+            border: solid white 1px;
+            width: 60vw;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+        }
+
+        input, button {
+            border: 1px solid black;
+        }
+
+        a {
+            color: white;
+            font-size: 12pt;
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <header class="homeBar">
+        <h1>Devil's Suggestion</h1>
+    </header>
+    <main>
+
+        <div class="container">
+            <form id="resetForm" onsubmit="ValidateAccountExists($('#valueLookup').val()); return false;">
+                <h1>Reset Password</h1>
+                <section id="resetPwBox">
+                    <table id="tableTest">
+                        <tr>
+                            <td colspan="2">Please complete the following information:<br /></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" id="valueLookup" placeholder="Enter User Name or email" required /></td>
+                            <td><button id="submitButton" type="submit" style="visibility: visible">Submit</button>
+
+                        </tr>
+
+                    </table>
+                </section>
+            </form>
+        </div>
+
+        <footer><a href="index.html">Return Home</a></footer>
+    </main>
+
+</body>
+</html>

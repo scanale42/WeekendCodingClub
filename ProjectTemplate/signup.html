@@ -27,7 +27,9 @@
                             var un = document.getElementById('userName').value;
                             var ea = document.getElementById('emailAddress').value;
                             var pw = document.getElementById('pwd').value;
-                            NewAccountRequest(fn, ln, un, ea, pw);
+                            var sq = document.getElementById('secQuestion').value;
+                            var sa = document.getElementById('secAnswer').value;
+                            NewAccountRequest(fn, ln, un, ea, pw, sq, sa);
                         }
                         else {
                             alert("The username or email address is already in use. Please try again.");
@@ -40,10 +42,11 @@
                 });
             }
 
-            function NewAccountRequest(firstName, lastName, userName, emailAddress, pwd) {
+            function NewAccountRequest(firstName, lastName, userName, emailAddress, pwd, secQuestion, secAnswer) {
                 var webMethod = "ProjectServices.asmx/NewAccountRequest";
                 var parameters = "{\"firstName\":\"" + encodeURI(firstName) + "\",\"lastName\":\"" + encodeURI(lastName) + "\",\"userName\":\"" + encodeURI(userName) +
-                    "\",\"emailAddress\":\"" + encodeURI(emailAddress) + "\",\"pwd\":\"" + encodeURI(pwd) + "\"}";
+                    "\",\"emailAddress\":\"" + encodeURI(emailAddress) + "\",\"pwd\":\"" + encodeURI(pwd) + "\",\"secQuestion\":\"" + encodeURI(secQuestion) +
+                    "\",\"secAnswer\":\"" + encodeURI(secAnswer) + "\"}";
 
                 //jQuery ajax method
                 $.ajax({
@@ -154,6 +157,12 @@
                         </tr>
                         <tr>
                             <td><input type="password" id="pwd" placeholder="Password" minlength="10" required /></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" id="secQuestion" placeholder="Enter Security Question" required /></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" id="secAnswer" placeholder="Enter Security Answer Here" required /></td>
                         </tr>
                         <tr>
                             <td>
