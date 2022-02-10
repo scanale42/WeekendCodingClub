@@ -281,7 +281,7 @@ namespace ProjectTemplate
 
         //Grabbing all of the Accounts that have not been approved yet. 
         [WebMethod(EnableSession = true)]
-        public Account[] GetUnapprovedAccounts(string valueLookup)
+        public Account[] GetUnapprovedAccounts()
         {
             if (Convert.ToInt32(Session["admin"]) == 1)
             {

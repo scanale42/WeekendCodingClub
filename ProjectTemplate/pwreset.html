@@ -95,14 +95,12 @@
 
 
         function ResetPassword(un) {
-            alert("here")
             var pw1 = document.getElementById("pwInput1").value;
             var pw2 = document.getElementById("pwInput2").value;
             var answer = document.getElementById("secAnswer").value;
             if (pw1 == pw2) {
                 var webMethod = "ProjectServices.asmx/ValidateSecurityQuestion";
                 var parameters = "{\"username\":\"" + encodeURI(un) + "\",\"answer\":\"" + encodeURI(answer) + "\",\"password\":\"" + encodeURI(pw1) +"\"}";
-                alert(parameters)
                 //jQuery ajax method
                 $.ajax({
                     type: "POST",
