@@ -223,6 +223,26 @@
             });
         }
 
+        function LikePost(i) {
+            var heart = document.getElementById("postHeart" + i);
+            var likesPoint = document.getElementById("postLikes" + i);
+            var likes = "0";
+            alert(heart.innerHTML);
+
+            if (heart.innerHTML != "❤") {
+                likes++;
+                heart.innerHTML = "&#10084";
+                likesPoint.innerHTML = likes;
+                
+            }
+            else {
+                heart.innerHTML = "&#9825";
+                likes--;
+                likesPoint.innerHTML = likes;
+            }
+            
+        }
+
         //this function grabs all the approved suggestions and displays them
         function LoadSuggestions() {
             var webMethod = "ProjectServices.asmx/LoadSuggestions";
@@ -241,7 +261,8 @@
                         for (var i = 0; i < suggestionsArray.length; i++) {
                             var suggestion;
 
-                            suggestion = "<div class='suggestionRow' id='suggestion'> <div class='postCat'>" + suggestionsArray[i].category + "</div> <div class='postDetails'>" + suggestionsArray[i].desc + "</div> <button class='upvote'>&#9825</button></div>"
+                            suggestion = "<div class='suggestionRow' id='suggestion'> <div class='postCat'>" + suggestionsArray[i].category + "</div> <div class='postDetails'>" +
+                                suggestionsArray[i].desc + "</div> <button class='upvote' id='postHeart" + i + "' onClick='LikePost(" + i + ")'>&#9825</button> <div class='postLikes' id='postLikes" + i + "'> 0 </div></div>"
                             $("#suggestionsBox").append(
                                 suggestion
                             );
@@ -487,10 +508,14 @@
             background: #FFF;
             padding: 8px;
             border-radius: 10px;
+            width: 150px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 15px;
         }
 
         .postDetails {
-            font-size: 20px;
+            font-size: 25px;
         }
 
         .upvote {
@@ -499,7 +524,7 @@
             padding: 0px;
             font-size: 200%;
             font-weight: bold;
-            margin: 0px;
+            margin: 0;
             border-radius: 10px;
         }
 
@@ -508,7 +533,7 @@
             color: white;
             border: none;
             padding: 1vh;
-            margin: auto;
+            margin: 0;
             cursor: pointer;
         }
 
@@ -518,6 +543,10 @@
             margin-bottom: 5px;
             font-weight: bold;
             text-align: center;
+        }
+
+        .postLikes {
+            
         }
 
         

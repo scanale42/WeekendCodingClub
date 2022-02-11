@@ -74,8 +74,8 @@
 
         .homeBar {
             background:                     #FFC627;
-            padding:                        0;
-            font-size:                      26px;
+            padding:                        20px;
+            font-size:                      24px;
             height:                         15vh;
             width:                          100vw;
             text-align:                     center;
@@ -97,8 +97,15 @@
             width:                          100px;
         }
 
-        input, button {
-            border:                         1px solid black;
+        button {
+            border:                         2px solid black;
+            cursor:                         pointer;
+            color:                          #8C1D40;
+            background:                     #FFF;
+        }
+
+        input {
+            border:                         2px solid black;
         }
 
         p {
@@ -109,13 +116,23 @@
 
         a {
             color:                          white;
+
+        }
+
+        #signUp {
+            background:                     #FFC627;
+            width:                          20vw;
+            margin:                         10px 0 0 40vw;
+            padding:                        10px;
+            border:                         2px solid black;
+            color:                          black;
         }
     </style>
 	<!--END OF YOUR OWN CSS-->
 </head >
 <body>
     <header class="homeBar">
-        <h1>Devil's Suggestion</h1>
+        <h1>Devil's Suggestions</h1>
     </header>
     <div id="logonPanel" class="contentPanel logonPanel">
         <div class="logonBox">
@@ -132,7 +149,13 @@
                     <button type="submit">Logon</button>
                 </div>
             </form>
-            <p>Don't have an account? <a href="signup.html">Sign Up Here</a> or <a href="pwreset.html">Forgot Password?</a></p>
+            <p>
+                <a href="pwreset.html">Forgot Password?</a> or<br />
+                <p id="signUp">
+                Don't have an account?
+                <a href="signup.html">Sign Up</a>
+                </p>
+            </p>
         </div>
     </div>
 </body>
