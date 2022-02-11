@@ -200,9 +200,10 @@
                         for (var i = 0; i < suggestionsArray.length; i++) {
                             var suggestion;
 
-                            suggestion = "<div class='suggestionRow'w id='suggestion'><button onclick=\"DeleteSuggestion(" +
-                                suggestionsArray[i].id + ")\">Delete</button> <b>Status: </b> " + suggestionsArray[i].status +
-                                " <b>Category: </b> " + suggestionsArray[i].category + " <b> Details:</b> " + suggestionsArray[i].desc + "</div><br><br>"
+                            suggestion = "<div class='suggestionRow'w id='suggestion'><button id=\"deleteBut" + i + "\" onclick=\"DeleteSuggestion(" +
+                                suggestionsArray[i].id + ", " + i + ")\">Delete</button><button id=\"editBut" + i + "\" onclick=\"EditSuggestion(" + suggestionsArray[i].id +
+                                ", " + i + ")\">Edit</button> <b>Status: </b> " + suggestionsArray[i].status + " <b>Category: </b> " + suggestionsArray[i].category +
+                                " <b> Details:</b> " + suggestionsArray[i].desc + "</div><br><br>"
                             $("#suggestionsBox").append(
                                 suggestion
                             );
@@ -298,7 +299,22 @@
         }
 
 
+        function EditSuggestion(id, i) {
+            buttonID = "editBut" + i;
+            alert(buttonID)
+            btn = document.getElementById(buttonID);
+            btn.innerText = "Save"
+            btn.addEventListener('click', () => { SaveEditSuggestion(id, buttonID, i) });
+            btn.removeEventListener('click', EditSuggestion);
+        }
 
+        function SaveEditSuggestion(id, buttonID, i) {
+            alert("Save Changes?")
+            btn = document.getElementById(buttonID);
+            btn.innerText = "Edit"
+            btn.addEventListener('click', () => { EditSuggestion(id, i) });
+            btn.removeEventListener('click', SavedEditSuggestion);
+        }
 
         //an ajax to delete a suggestion post
         function DenyAccount(id) {
@@ -548,7 +564,7 @@
 
         <section id="adminPanel" class="adminContainer" style="visibility: hidden">
             <a href="#" id="suggestionsLink" onclick="LoadUnapprovedSuggestions()">Review Suggesion Requests</a><br>
-            <a href="#" id="suggestionsLink" onclick="ManageSuggestions()">Manage Suggesions</a><br>
+            <a href="#" id="suggestionsLink" onclick="ManageSuggestions()">Manage Approved Suggesions</a><br>
             <a href="#" id="suggestionsLink" onclick="LoadUnapprovedAccounts()">Review Account Requests</a><br>
             <a href="#" id="suggestionsLink" onclick="LoadAccounts()">Manage Accounts</a><br><br>
             <a href="#" id="suggestionsLink" onclick="LoadSuggestions()">Home</a><br><br>
