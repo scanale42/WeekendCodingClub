@@ -199,7 +199,7 @@ namespace ProjectTemplate
             DataTable sqlDt = new DataTable("suggestions");
 
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
-            string sqlSelect = "select id, `desc`, submitter, category from suggestions where approved=1 order by id";
+            string sqlSelect = "select id, `desc`, submitter, category, status from suggestions where approved=1 order by id";
 
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
             MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
@@ -216,7 +216,8 @@ namespace ProjectTemplate
                     id = Convert.ToInt32(sqlDt.Rows[i]["id"]),
                     desc = sqlDt.Rows[i]["desc"].ToString(),
                     submitter = sqlDt.Rows[i]["submitter"].ToString(),
-                    category = sqlDt.Rows[i]["category"].ToString()
+                    category = sqlDt.Rows[i]["category"].ToString(),
+                    status = sqlDt.Rows[i]["status"].ToString()
                 });
             }
 
