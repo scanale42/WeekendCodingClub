@@ -7,7 +7,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <!--YOUR OWN JAVASCRIPT CAN GO RIGHT HERE-->
-    <script type="text/javascript">//passes account info to the server, to create an account request
+    <script type="text/javascript">
+    //passes account info to the server, to create an account request
         function NewSuggestion(desc, category) {
             var webMethod = "ProjectServices.asmx/NewSuggestion";
             var parameters = "{\"desc\":\"" + encodeURI(desc) + "\",\"category\":\"" + encodeURI(category) + "\"}";
@@ -202,7 +203,8 @@
 
                             suggestion = "<div class='suggestionRow'w id='suggestion'><button id=\"deleteBut" + i + "\" onclick=\"DeleteSuggestion(" +
                                 suggestionsArray[i].id + ", " + i + ")\">Delete</button><button id=\"editBut" + i + "\" onclick=\"EditSuggestion(" + suggestionsArray[i].id +
-                                ", " + i + ")\">Edit</button> <b>Status: </b> " + suggestionsArray[i].status + " <b>Category: </b> " + suggestionsArray[i].category +
+                                ", \'" + suggestionsArray[i].desc + "\', \'" + suggestionsArray[i].status + "\', \'" + suggestionsArray[i].category + "\')\">Edit</button> <b>Status: </b> " +
+                                suggestionsArray[i].status + " <b>Category: </b> " + suggestionsArray[i].category +
                                 " <b> Details:</b> " + suggestionsArray[i].desc + "</div><br><br>"
                             $("#suggestionsBox").append(
                                 suggestion
@@ -233,14 +235,14 @@
                 likes++;
                 heart.innerHTML = "&#10084";
                 likesPoint.innerHTML = likes;
-                
+
             }
             else {
                 heart.innerHTML = "&#9825";
                 likes--;
                 likesPoint.innerHTML = likes;
             }
-            
+
         }
 
         //this function grabs all the approved suggestions and displays them
@@ -311,7 +313,7 @@
                         );
 
                     }
-   
+
                 },
                 error: function (e) {
                     alert("Something unexpected happened. You've been eaten by a grue.");
@@ -323,7 +325,7 @@
         function FilterSuggestions(filter) {
             var webMethod = "ProjectServices.asmx/FilterSuggestions";
             var parameters = "{\"filter\":\"" + encodeURI(filter) + "\"}";
-           // alert(parameters)
+            // alert(parameters)
             $.ajax({
                 type: "POST",
                 url: webMethod,
@@ -362,13 +364,15 @@
         }
 
 
-        function EditSuggestion(id, i) {
-            buttonID = "editBut" + i;
-            alert(buttonID)
-            btn = document.getElementById(buttonID);
-            btn.innerText = "Save"
-            btn.addEventListener('click', () => { SaveEditSuggestion(id, buttonID, i) });
-            btn.removeEventListener('click', EditSuggestion);
+        function EditSuggestion(id, desc, status, category) {
+            paremeters = id + ", " + desc + ", " + status + ", " + category;
+
+            alert(paremeters)
+            OpenForm()
+            //btn = document.getElementById(buttonID);
+            //btn.innerText = "Save"
+            // btn.addEventListener('click', () => { SaveEditSuggestion(id, buttonID, i) });
+            // btn.removeEventListener('click', EditSuggestion);
         }
 
         function SaveEditSuggestion(id, buttonID, i) {
@@ -433,10 +437,18 @@
 
             $("#adminPanel").css("visibility", "hidden");
             $("#adminLink").text("");
-        }</script>
+        }
 
+        // Functions for editing suggestion
+        function OpenForm() {
+            document.getElementById("myForm").style.display = "block";
+        }
 
+        function CloseForm() {
+            document.getElementById("myForm").style.display = "none";
+        }
 
+    </script>
     <!--END OF YOUR OWN JAVASCRIPT-->
 
     <style>
@@ -530,7 +542,7 @@
             resize: none;
             border: none;
         }
- 
+
         .label {
             background-color: #FFC627;
             font-weight: bold;
@@ -596,10 +608,81 @@
         }
 
         .postLikes {
-            
         }
 
-        
+
+
+        /* Styling for the edit suggestion pop-up box*/
+        /* Button used to open the contact form - fixed at the bottom of the page */
+        .open-button {
+            background-color: #555;
+            color: white;
+            padding: 16px 20px;
+            border: none;
+            cursor: pointer;
+            opacity: 0.8;
+            position: fixed;
+            bottom: 23px;
+            right: 28px;
+            width: 280px;
+        }
+
+        /* The popup form - hidden by default */
+        .form-popup {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            right: 15px;
+            border: 3px solid #f1f1f1;
+            z-index: 9;
+        }
+
+        /* Add styles to the form container */
+        .form-container {
+            max-width: 300px;
+            padding: 10px;
+            background-color: white;
+        }
+
+            /* Full-width input fields */
+            .form-container input[type=text], .form-container input[type=password] {
+                width: 100%;
+                padding: 15px;
+                margin: 5px 0 22px 0;
+                border: none;
+                background: #f1f1f1;
+            }
+
+                /* When the inputs get focus, do something */
+                .form-container input[type=text]:focus, .form-container input[type=password]:focus {
+                    background-color: #ddd;
+                    outline: none;
+                }
+
+            /* Set a style for the submit/login button */
+            .form-container .btn {
+                background-color: #04AA6D;
+                color: white;
+                padding: 16px 20px;
+                border: none;
+                cursor: pointer;
+                width: 100%;
+                margin-bottom: 10px;
+                opacity: 0.8;
+            }
+
+            /* Add a red background color to the cancel button */
+            .form-container .cancel {
+                background-color: red;
+            }
+
+            /* Add some hover effects to buttons */
+            .form-container .btn:hover, .open-button:hover {
+                opacity: 1;
+            }
+
+
+
     </style>
 </head>
 
@@ -657,6 +740,34 @@
                 <!--<h2>Current Unapproved Suggestions</h2><hr>
             <section class="unapprovedSuggestionsBox" id="unapprovedSuggestionsBox"></section>-->
             </section>
+        </div>
+        <!--This section is for the edit suggestion pop-up box-->
+        <div class="form-popup" id="myForm">
+            <form action="/action_page.php" class="form-container">
+                <h1>Edit Suggestion</h1>
+
+                <label class="label">Category of Suggestion:</label><br>
+                <select name="category" id="category">
+                    <option value="Money">Money</option>
+                    <option value="HR">HR</option>
+                    <option value="Employee">Employee</option>
+                    <option value="Hours">Working Hours</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <label class="label">Status</label><br>
+                <select name="status" id="status">
+                    <option value="Evaluating">Evaluating</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                </select>
+
+                <label for="psw"><b>Password</b></label>
+                <input type="text" placeholder="Description" name="desc">
+
+                <button type="submit" class="btn">Save Edits</button>
+                <button type="button" class="btn cancel" onclick="CloseForm()">Cancel</button>
+            </form>
         </div>
 
     </div>
