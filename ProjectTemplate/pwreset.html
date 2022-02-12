@@ -24,7 +24,11 @@
                         accountsArray = msg.d;
                         var secQuestion;
                         var userName;
+
                         for (var i = 0; i < accountsArray.length; i++) {
+                            if (accountsArray.length > 1) {
+                                i = 1
+                            };
                             secQuestion = accountsArray[i].secQuestion
                             userName = accountsArray[i].userName
                             document.getElementById('submitButton').style.visibility = 'hidden'
