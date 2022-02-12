@@ -319,6 +319,48 @@
             });
         }
 
+        //this function loads the suggestions based on the filter
+        function FilterSuggestions(filter) {
+            var webMethod = "ProjectServices.asmx/FilterSuggestions";
+            var parameters = "{\"filter\":\"" + encodeURI(filter) + "\"}";
+           // alert(parameters)
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.d.length > 0) {
+                        suggestionsArray = msg.d;
+                        //this clears out the div that will hold our suggestion info. Not sure if this is in use any more.
+                        $("#suggestionsBox").empty();
+                        middlePanelTitle.innerText = filter + " Suggestions";
+                        admin = false;
+                        for (var i = 0; i < suggestionsArray.length; i++) {
+                            var suggestion;
+
+                            suggestion = "<div class='suggestionRow'w id='suggestion'><b>Category: </b> " + suggestionsArray[i].category + " <b> Details:</b> " +
+                                suggestionsArray[i].desc + "</div><br><br>"
+                            $("#suggestionsBox").append(
+                                suggestion
+                            );
+                        }
+                    }
+                    else {
+                        message = "No suggestions to approve"
+                        $("#unapprovedSuggestionsBox").append(
+                            message
+                        );
+
+                    }
+                },
+                error: function (e) {
+                    alert("Something unexpected happened. You've been eaten by a grue.");
+                }
+            });
+        }
+
 
         function EditSuggestion(id, i) {
             buttonID = "editBut" + i;
@@ -595,7 +637,15 @@
 
         <div class="adminContainer">
             <section id="filterPanel">
-                <h4>Filters</h4>
+                <h4><u>Filters</u></h4><br />
+                <a href="#" id="filterLink" onclick="FilterSuggestions('Employee')">Employees Suggestions</a><br>
+                <a href="#" id="filterLink" onclick="FilterSuggestions('Hours')">Hours Suggestions</a><br>
+                <a href="#" id="filterLink" onclick="FilterSuggestions('HR')">HR Suggestions</a><br>
+                <a href="#" id="filterLink" onclick="FilterSuggestions('Other')">Other Suggestions</a><br>
+                <a href="#" id="filterLink" onclick="FilterSuggestions('Evaluating')">Suggestions in Evaluation</a><br>
+                <a href="#" id="filterLink" onclick="FilterSuggestions('In Progress')">Suggestions In Progress</a><br>
+                <a href="#" id="filterLink" onclick="FilterSuggestions('Completed')">Completed Suggestionss</a><br>
+                <a href="#" id="filterLink" onclick="FilterSuggestions('All')">Show All Suggestions</a><br>
             </section>
 
             <section id="adminPanel" style="visibility: hidden">

@@ -225,6 +225,77 @@ namespace ProjectTemplate
             return suggestions.ToArray();
         }
 
+        //Grabbing all of the suggestions that have been approved. 
+        [WebMethod(EnableSession = true)]
+        public Suggestion[] FilterSuggestions(string filter)
+        {
+            DataTable sqlDt = new DataTable("suggestions");
+
+            var selection = "where approved=1";
+            if (filter == "Hours")
+            {
+                selection = "where category='Hours'";
+            };
+
+            if (filter == "HR")
+            {
+                selection = "where category='HR'";
+            };
+
+            if (filter == "Employee")
+            {
+                selection = "where category='Employee'";
+            };
+
+            if (filter == "Other")
+            {
+                selection = "where category='Other'";
+            }
+
+            if (filter == "Evaluating")
+            {
+                selection = "where status='Evaluating'";
+            }
+
+            if (filter == "Completed")
+            {
+                selection = "where status='Completed'";
+            }
+
+            if (filter == "In Progress")
+            {
+                selection = "where status='In Progress'";
+            }
+
+
+
+            string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+            string sqlSelect = "select id, `desc`, submitter, category, status from suggestions " + selection + " order by id";
+
+            MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+            MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+            MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+            sqlDa.Fill(sqlDt);
+
+            List<Suggestion> suggestions = new List<Suggestion>();
+            for (int i = 0; i < sqlDt.Rows.Count; i++)
+            {
+
+                suggestions.Add(new Suggestion
+                {
+                    id = Convert.ToInt32(sqlDt.Rows[i]["id"]),
+                    desc = sqlDt.Rows[i]["desc"].ToString(),
+                    submitter = sqlDt.Rows[i]["submitter"].ToString(),
+                    category = sqlDt.Rows[i]["category"].ToString(),
+                    status = sqlDt.Rows[i]["status"].ToString()
+                });
+            }
+
+            //convert the list of suggestionsto an array and return!
+            return suggestions.ToArray();
+        }
+
         //Delete a suggestion
         [WebMethod(EnableSession = true)]
         public void DenySuggestion(string id)
