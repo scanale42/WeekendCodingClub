@@ -439,7 +439,15 @@
             border: solid white 1px;
         }
 
-        .adminContainer {
+        #filterPanel {
+            padding: 10px;
+            height: fit-content;
+            margin: 10px 10px 0 10px;
+            background-color: #FFC627;
+            border: solid white 1px;
+        }
+
+        #adminPanel {
             padding: 10px;
             height: fit-content;
             margin: 10px 10px 0 10px;
@@ -582,25 +590,25 @@
         <main id="suggestionsPanel" class="contentPanel">
             <h2 id="middlePanelTitle"> Current Suggestions</h2><hr>
             <h3 id="topPost">Top Post</h3>
-            <section class="suggestionsBox" id="suggestionsBox">
-            </section>
+            <section class="suggestionsBox" id="suggestionsBox"></section>
         </main>
 
-        <div id="filterPanel">
-            <div id="filterTitle">Filters</div>
+        <div class="adminContainer">
+            <section id="filterPanel">
+                <h4>Filters</h4>
+            </section>
 
+            <section id="adminPanel" style="visibility: hidden">
+                <a href="#" id="suggestionsLink" onclick="LoadUnapprovedSuggestions()">Review Suggesion Requests</a><br>
+                <a href="#" id="suggestionsLink" onclick="ManageSuggestions()">Manage Suggesions</a><br>
+                <a href="#" id="suggestionsLink" onclick="LoadUnapprovedAccounts()">Review Account Requests</a><br>
+                <a href="#" id="suggestionsLink" onclick="LoadAccounts()">Manage Accounts</a><br><br>
+                <a href="#" id="suggestionsLink" onclick="LoadSuggestions()">Home</a><br><br>
+                <!--<h2>Current Unapproved Suggestions</h2><hr>
+            <section class="unapprovedSuggestionsBox" id="unapprovedSuggestionsBox"></section>-->
+            </section>
         </div>
 
-        <section id="adminPanel" class="adminContainer" style="visibility: hidden">
-            <a href="#" id="suggestionsLink" onclick="LoadUnapprovedSuggestions()">Review Suggesion Requests</a><br>
-            <a href="#" id="suggestionsLink" onclick="ManageSuggestions()">Manage Approved Suggesions</a><br>
-            <a href="#" id="suggestionsLink" onclick="LoadUnapprovedAccounts()">Review Account Requests</a><br>
-            <a href="#" id="suggestionsLink" onclick="LoadAccounts()">Manage Accounts</a><br><br>
-            <a href="#" id="suggestionsLink" onclick="LoadSuggestions()">Home</a><br><br>
-            <!--<h2>Current Unapproved Suggestions</h2><hr>
-        <section class="unapprovedSuggestionsBox" id="unapprovedSuggestionsBox"></section>-->
-        </section>
-
-        </div>
+    </div>
     </body>
     </html>
