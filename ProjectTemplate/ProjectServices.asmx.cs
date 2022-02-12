@@ -115,6 +115,8 @@ namespace ProjectTemplate
             return success;
         }
 
+
+        //Function for logging of a user
         [WebMethod(EnableSession = true)]
         public bool LogOff()
         {
@@ -150,6 +152,35 @@ namespace ProjectTemplate
             {
             }
             sqlConnection.Close();
+        }
+
+        //Editing a suggestion
+        [WebMethod(EnableSession = true)]
+        public void EditSuggestion(string id, string status, string desc, string category)
+        {
+            int userID = Convert.ToInt32(Session["id"]);
+            string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+
+            string sqlSelect = "update suggestions set `desc`=@descValue, status=@statusValue, category=@categoryValue where id=@idValue";
+
+            MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+            MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+            sqlCommand.Parameters.AddWithValue("@descValue", HttpUtility.UrlDecode(desc));
+            sqlCommand.Parameters.AddWithValue("@idValue", HttpUtility.UrlDecode(id));
+            sqlCommand.Parameters.AddWithValue("@categoryValue", HttpUtility.UrlDecode(category));
+            sqlCommand.Parameters.AddWithValue("@statusValue", HttpUtility.UrlDecode(status));
+
+            sqlConnection.Open();
+            try
+            {
+                sqlCommand.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+            }
+            sqlConnection.Close();
+            
         }
 
         //Grabbing all of the suggestions that have not been approved yet. 
@@ -225,7 +256,7 @@ namespace ProjectTemplate
             return suggestions.ToArray();
         }
 
-        //Grabbing all of the suggestions that have been approved. 
+        //Returning suggestions based on the filter supplied
         [WebMethod(EnableSession = true)]
         public Suggestion[] FilterSuggestions(string filter)
         {
@@ -266,8 +297,6 @@ namespace ProjectTemplate
             {
                 selection = "where status='In Progress'";
             }
-
-
 
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
             string sqlSelect = "select id, `desc`, submitter, category, status from suggestions " + selection + " order by id";
@@ -501,6 +530,8 @@ namespace ProjectTemplate
             sqlConnection.Close();
         }
 
+
+        //Validate that the user is not requesting a username or email address that is already in the system
         [WebMethod(EnableSession = true)] //NOTICE: gotta enable session on each individual method
         public bool ValidateAccountRequest(string userName, string emailAddress)
         {
@@ -583,6 +614,8 @@ namespace ProjectTemplate
             return account.ToArray();
         }
 
+
+        //Checking to see if the user answered the security question correctly
         [WebMethod(EnableSession = true)] //NOTICE: gotta enable session on each individual method
         public bool ValidateSecurityQuestion(string username, string answer, string password)
         {

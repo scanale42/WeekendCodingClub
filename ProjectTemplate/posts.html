@@ -8,30 +8,16 @@
 
     <!--YOUR OWN JAVASCRIPT CAN GO RIGHT HERE-->
     <script type="text/javascript">
-    //passes account info to the server, to create an account request
-        function NewSuggestion(desc, category) {
-            var webMethod = "ProjectServices.asmx/NewSuggestion";
-            var parameters = "{\"desc\":\"" + encodeURI(desc) + "\",\"category\":\"" + encodeURI(category) + "\"}";
 
-            $.ajax({
-                type: "POST",
-                url: webMethod,
-                data: parameters,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (msg) {
-                    //showPanel('logonPanel');
-                    alert("Suggestion pending approval by admins. You'll receive a notification when it has been reviewed. ");
-                },
-                error: function (e) {
-                    alert("boo...");
-                }
-            });
-        }
+
+        //Global variable used to store information about posts we're trying to edit and pass onto another function that can't easily handle it
+        postID = 0;
+        description = "";
+
+
 
         //logs the user off both at the client and at the server
         function LogOff() {
-
             var webMethod = "ProjectServices.asmx/LogOff";
             $.ajax({
                 type: "POST",
@@ -55,7 +41,49 @@
             });
         }
 
-        //an ajax to delete a suggestion post
+        //an ajax to check if the user is an admin
+        function CheckAdmin() {
+            var webMethod = "ProjectServices.asmx/IsAdmin";
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.d) {
+                        ShowMenu();
+                        //alert("Admin");
+                    }
+                    else {
+                        //alert("Not an Admin");
+                    }
+
+                },
+            });
+        }
+
+        //passes account info to the server, to create an account request
+        function NewSuggestion(desc, category) {
+            var webMethod = "ProjectServices.asmx/NewSuggestion";
+            var parameters = "{\"desc\":\"" + encodeURI(desc) + "\",\"category\":\"" + encodeURI(category) + "\"}";
+
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    alert("Suggestion pending approval by admins. You'll receive a notification when it has been reviewed. ");
+                },
+                error: function (e) {
+                    alert("boo...");
+                }
+            });
+        }
+
+
+        //an ajax to deny a suggestion which will remove it from the database
         function DenySuggestion(id) {
             var webMethod = "ProjectServices.asmx/DenySuggestion";
             var parameters = "{\"id\":\"" + encodeURI(id) + "\"}";
@@ -75,7 +103,7 @@
             });
         }
 
-        //an ajax to delete a suggestion post
+        //an ajax to delete a suggestion post. Prompts the user to be sure
         function DeleteSuggestion(id) {
             var webMethod = "ProjectServices.asmx/DenySuggestion";
             var parameters = "{\"id\":\"" + encodeURI(id) + "\"}";
@@ -122,27 +150,6 @@
             });
         }
 
-        //an ajax to approve a suggestion
-        function CheckAdmin() {
-            var webMethod = "ProjectServices.asmx/IsAdmin";
-            $.ajax({
-                type: "POST",
-                url: webMethod,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (msg) {
-                    if (msg.d) {
-                        ShowMenu();
-                        //alert("Admin");
-                    }
-                    else {
-                        //alert("Not an Admin");
-                    }
-
-                },
-            });
-        }
-
         //this function grabs all the unapproved suggestions and displays them
         function LoadUnapprovedSuggestions() {
             var webMethod = "ProjectServices.asmx/GetUnapprovedSuggestions";
@@ -154,7 +161,6 @@
                 success: function (msg) {
                     if (msg.d.length > 0) {
                         suggestionsArray = msg.d;
-                        //this clears out the div that will hold our suggestion info. Not sure if this is in use any more.
                         $("#suggestionsBox").empty();
                         middlePanelTitle.innerText = "Review Suggestions";
                         admin = false;
@@ -225,26 +231,6 @@
             });
         }
 
-        function LikePost(i) {
-            var heart = document.getElementById("postHeart" + i);
-            var likesPoint = document.getElementById("postLikes" + i);
-            var likes = "0";
-            alert(heart.innerHTML);
-
-            if (heart.innerHTML != "❤") {
-                likes++;
-                heart.innerHTML = "&#10084";
-                likesPoint.innerHTML = likes;
-
-            }
-            else {
-                heart.innerHTML = "&#9825";
-                likes--;
-                likesPoint.innerHTML = likes;
-            }
-
-        }
-
         //this function grabs all the approved suggestions and displays them
         function LoadSuggestions() {
             var webMethod = "ProjectServices.asmx/LoadSuggestions";
@@ -278,48 +264,27 @@
             });
         }
 
-        //this function grabs all the unapproved accounts and displays them
-        function LoadUnapprovedAccounts() {
-            var webMethod = "ProjectServices.asmx/GetUnapprovedAccounts";
-            $.ajax({
-                type: "POST",
-                url: webMethod,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (msg) {
+        //This function is for letting users click the like button, and unclick it
+        function LikePost(i) {
+            var heart = document.getElementById("postHeart" + i);
+            var likesPoint = document.getElementById("postLikes" + i);
+            var likes = "0";
+            alert(heart.innerHTML);
 
-                    if (msg.d.length > 0) {
-                        accountsArray = msg.d;
-                        //this clears out the div that will hold our suggestion info. Not sure if this is in use any more.
-                        $("#suggestionsBox").empty();
-                        middlePanelTitle.innerText = "Review Accounts";
-                        admin = false;
-                        for (var i = 0; i < accountsArray.length; i++) {
-                            var account;
+            if (heart.innerHTML != "❤") {
+                likes++;
+                heart.innerHTML = "&#10084";
+                likesPoint.innerHTML = likes;
 
-                            account = "<div class='suggestionRow' id='account'><button onclick=\"ApproveAccount(" + accountsArray[i].id + ")\">Approve</button><button onclick=\"DenyAccount(" +
-                                accountsArray[i].id + ")\">Deny</button> <b>First Name </b> " + accountsArray[i].firstName + " <b>Last Name:</b> " +
-                                accountsArray[i].lastName + " <b> Username: </b> " + accountsArray[i].userName + "</div><br><br>"
-                            $("#suggestionsBox").append(
-                                account
-                            );
-                        }
+            }
+            else {
+                heart.innerHTML = "&#9825";
+                likes--;
+                likesPoint.innerHTML = likes;
+            }
 
-                    }
-                    else {
-                        message = "No accounts to approve"
-                        $("#unapprovedSuggestionsBox").append(
-                            message
-                        );
-
-                    }
-
-                },
-                error: function (e) {
-                    alert("Something unexpected happened. You've been eaten by a grue.");
-                }
-            });
         }
+
 
         //this function loads the suggestions based on the filter
         function FilterSuggestions(filter) {
@@ -363,27 +328,98 @@
             });
         }
 
-
+        //Taking parameters from the post we want to edit and passing them into our pop-up form.
         function EditSuggestion(id, desc, status, category) {
             paremeters = id + ", " + desc + ", " + status + ", " + category;
-
-            alert(paremeters)
+            postID = id;
+            description = desc
             OpenForm()
-            //btn = document.getElementById(buttonID);
-            //btn.innerText = "Save"
-            // btn.addEventListener('click', () => { SaveEditSuggestion(id, buttonID, i) });
-            // btn.removeEventListener('click', EditSuggestion);
         }
 
-        function SaveEditSuggestion(id, buttonID, i) {
-            alert("Save Changes?")
-            btn = document.getElementById(buttonID);
-            btn.innerText = "Edit"
-            btn.addEventListener('click', () => { EditSuggestion(id, i) });
-            btn.removeEventListener('click', SavedEditSuggestion);
+        //Taking the parameters passed from the pop-up form and sending them to be inserted into the table.
+        //If there was no description entered - it will use the decscription saved in the global variable from the 
+        //EditSuggestion function - so that we don't accidentally save a blank field. 
+        function SaveEdits(desc, category, status, id) {
+            if (desc == "") {
+                desc = description
+            };
+            paremeters = id + ", " + desc + ", " + status + ", " + category;
+            var webMethod = "ProjectServices.asmx/EditSuggestion";
+            var parameters = "{\"id\":\"" + encodeURI(id) + "\",\"status\":\"" +
+                encodeURI(status) + "\",\"desc\":\"" + encodeURI(desc) + "\",\"category\":\"" + encodeURI(category) + "\"}";
+
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    alert("Edit Saved");
+                    CloseForm()
+                    description = "";
+                },
+                error: function (e) {
+                    alert("boo...");
+                }
+            });
         }
 
-        //an ajax to delete a suggestion post
+        // Functions for opening a pop-up form for editing a suggestion
+        function OpenForm() {
+            document.getElementById("myForm").style.display = "block";
+        }
+
+        // Functions for closing a pop-up form for editing a suggestion
+        function CloseForm() {
+            document.getElementById("myForm").style.display = "none";
+        } 
+
+        //this function grabs all the unapproved accounts and displays them
+        function LoadUnapprovedAccounts() {
+            var webMethod = "ProjectServices.asmx/GetUnapprovedAccounts";
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+
+                    if (msg.d.length > 0) {
+                        accountsArray = msg.d;
+                        //this clears out the div that will hold our suggestion info. Not sure if this is in use any more.
+                        $("#suggestionsBox").empty();
+                        middlePanelTitle.innerText = "Review Accounts";
+                        admin = false;
+                        for (var i = 0; i < accountsArray.length; i++) {
+                            var account;
+
+                            account = "<div class='suggestionRow' id='account'><button onclick=\"ApproveAccount(" + accountsArray[i].id + ")\">Approve</button><button onclick=\"DenyAccount(" +
+                                accountsArray[i].id + ")\">Deny</button> <b>First Name </b> " + accountsArray[i].firstName + " <b>Last Name:</b> " +
+                                accountsArray[i].lastName + " <b> Username: </b> " + accountsArray[i].userName + "</div><br><br>"
+                            $("#suggestionsBox").append(
+                                account
+                            );
+                        }
+
+                    }
+                    else {
+                        message = "No accounts to approve"
+                        $("#unapprovedSuggestionsBox").append(
+                            message
+                        );
+
+                    }
+
+                },
+                error: function (e) {
+                    alert("Something unexpected happened. You've been eaten by a grue.");
+                }
+            });
+        }        
+
+
+        //an ajax to deny an account request
         function DenyAccount(id) {
             var webMethod = "ProjectServices.asmx/DenyAccount";
             var parameters = "{\"id\":\"" + encodeURI(id) + "\"}";
@@ -403,7 +439,7 @@
             });
         }
 
-        //an ajax to approve a suggestion
+        //an ajax to approve an account request
         function ApproveAccount(id) {
             var webMethod = "ProjectServices.asmx/ApproveAccount";
             var parameters = "{\"id\":\"" + encodeURI(id) + "\"}";
@@ -432,21 +468,14 @@
         }
 
 
-        //just hides the menu
+        //just hides the admin menu
         function HideMenu() {
 
             $("#adminPanel").css("visibility", "hidden");
             $("#adminLink").text("");
         }
 
-        // Functions for editing suggestion
-        function OpenForm() {
-            document.getElementById("myForm").style.display = "block";
-        }
 
-        function CloseForm() {
-            document.getElementById("myForm").style.display = "none";
-        }
 
     </script>
     <!--END OF YOUR OWN JAVASCRIPT-->
@@ -614,72 +643,65 @@
 
         /* Styling for the edit suggestion pop-up box*/
         /* Button used to open the contact form - fixed at the bottom of the page */
-        .open-button {
-            background-color: #555;
-            color: white;
-            padding: 16px 20px;
-            border: none;
-            cursor: pointer;
-            opacity: 0.8;
-            position: fixed;
-            bottom: 23px;
-            right: 28px;
-            width: 280px;
-        }
 
         /* The popup form - hidden by default */
         .form-popup {
             display: none;
             position: fixed;
-            bottom: 0;
-            right: 15px;
-            border: 3px solid #f1f1f1;
+            top: 130px;
+            right: 10px;
+            border: 3px solid black;
             z-index: 9;
         }
 
         /* Add styles to the form container */
         .form-container {
-            max-width: 300px;
+            max-width: 275px;
             padding: 10px;
-            background-color: white;
+            background-color: floralwhite;
         }
 
-            /* Full-width input fields */
-            .form-container input[type=text], .form-container input[type=password] {
-                width: 100%;
-                padding: 15px;
-                margin: 5px 0 22px 0;
-                border: none;
-                background: #f1f1f1;
-            }
+        /* Full-width input fields */
+        .form-container input[type=text], .form-container input[type=password] {
+            width: 100%;
+            padding: 15px;
+            margin: 5px 0 22px 0;
+            border: none;
+            background: #f1f1f1;
+        }
 
-                /* When the inputs get focus, do something */
-                .form-container input[type=text]:focus, .form-container input[type=password]:focus {
-                    background-color: #ddd;
-                    outline: none;
-                }
+        /* When the inputs get focus, do something */
+        .form-container input[type=text]:focus, .form-container input[type=password]:focus {
+            background-color: #ddd;
+            outline: none;
+        }
 
-            /* Set a style for the submit/login button */
-            .form-container .btn {
-                background-color: #04AA6D;
-                color: white;
-                padding: 16px 20px;
-                border: none;
-                cursor: pointer;
-                width: 100%;
-                margin-bottom: 10px;
-                opacity: 0.8;
-            }
+        /* Set a style for the submit/login button */
+        .form-container .btn {
+            background-color: #04AA6D;
+            color: white;
+            padding: 16px 20px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
 
-            /* Add a red background color to the cancel button */
-            .form-container .cancel {
-                background-color: red;
-            }
+        /* Add a red background color to the cancel button */
+        .form-container .cancel {
+            background-color: red;
+        }
 
-            /* Add some hover effects to buttons */
-            .form-container .btn:hover, .open-button:hover {
-                opacity: 1;
-            }
+        /* Add some hover effects to buttons */
+        .form-container .btn:hover, .open-button:hover {
+            opacity: 1;
+        }
+
+        .popUpLabel {
+            background-color: #FFC627;
+            font-weight: bold;
+        }
 
 
 
@@ -743,27 +765,27 @@
         </div>
         <!--This section is for the edit suggestion pop-up box-->
         <div class="form-popup" id="myForm">
-            <form action="/action_page.php" class="form-container">
+            <form class="form-container"onsubmit="SaveEdits($('#editDesc').val() , $('#editCategory').val(), $('#editStatus').val(), postID); return false;" >
                 <h1>Edit Suggestion</h1>
 
-                <label class="label">Category of Suggestion:</label><br>
-                <select name="category" id="category">
+                <label class="popUpLabel">Category of Suggestion:</label><br>
+                <select name="editCategory" id="editCategory">
                     <option value="Money">Money</option>
                     <option value="HR">HR</option>
                     <option value="Employee">Employee</option>
                     <option value="Hours">Working Hours</option>
                     <option value="Other">Other</option>
-                </select>
+                </select><br />
 
-                <label class="label">Status</label><br>
-                <select name="status" id="status">
+                <label class="popUpLabel">Status of Sugegstion:</label><br>
+                <select name="editStatus" id="editStatus">
                     <option value="Evaluating">Evaluating</option>
                     <option value="In Progress">In Progress</option>
                     <option value="Completed">Completed</option>
-                </select>
+                </select><br />
 
-                <label for="psw"><b>Password</b></label>
-                <input type="text" placeholder="Description" name="desc">
+                <label class="popUpLabel"><b>Desctiption of Suggestion</b></label>
+                <input type="text" placeholder="Description" name="editDesc" id="editDesc">
 
                 <button type="submit" class="btn">Save Edits</button>
                 <button type="button" class="btn cancel" onclick="CloseForm()">Cancel</button>
