@@ -108,7 +108,6 @@ namespace ProjectTemplate
                 if (approved == 1){ 
                     Session["id"] = sqlDt.Rows[0]["id"];
                     Session["admin"] = sqlDt.Rows[0]["admin"];
-                    success = true;
                 }
             }
             //return the result!
@@ -528,6 +527,17 @@ namespace ProjectTemplate
             {
             }
             sqlConnection.Close();
+        }
+
+        [WebMethod(EnableSession = true)]
+        public bool IsUser()
+        {
+            bool success = false;
+            if (Convert.ToInt32(Session["admin"]) == 0 || Convert.ToInt32(Session["admin"]) == 1)
+                success = true;
+            else
+                success = false;
+            return success;
         }
 
 
