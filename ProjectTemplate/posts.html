@@ -290,22 +290,22 @@
                             var suggestion;
 
                             if (uID != suggestionsArray[i].usersLiked) {
-                                suggestion = "<div class='suggestionRow' id='suggestion'> <div class='postCat'>" + suggestionsArray[i].category +
-                                    "</div> <div class='postDetails'>" + suggestionsArray[i].desc + "</div> <button class='upvote' id='postHeart" +
-                                    i + "' onClick='LikePost(" + suggestionsArray[i].id + ", " + suggestionsArray[i].usersLiked +", "+ i + ")'>&#9825</button> <span class='postLikes' id='postLikes" + i +
-                                    "'>" + suggestionsArray[i].likeCount + "</span></div>"
+                                suggestion = "<div class=\"suggestionRow\" id=\"suggestion\"> <div class=\"postCat\">" + suggestionsArray[i].category +
+                                    "</div> <div class=\"postDetails\">" + suggestionsArray[i].desc + "</div> <button class=\"upvote\" id=\"postHeart" +
+                                    i + "\" onClick=\"LikePost(" + suggestionsArray[i].id + ", '" + suggestionsArray[i].id + "', " + i + ")\">&#9825</button> <span class=\"postLikes\" id=\"postLikes" + i +
+                                    "\">" + suggestionsArray[i].likeCount + "</span></div>"
                                 $("#suggestionsBox").append(
                                     suggestion
                                 );
                             }
                             else {
-                                suggestion = "<div class='suggestionRow' id='suggestion'> <div class='postCat'>" + suggestionsArray[i].category +
-                                    "</div> <div class='postDetails'>" + suggestionsArray[i].desc + "</div> <button class='upvote' id='postHeart" +
-                                    i + "' onClick='LikePost(" + suggestionsArray[i].id + ", " + suggestionsArray[i].usersLiked +", "+ i + ")'>&#10084</button> <span class='postLikes' id='postLikes" + i +
-                                    "'>" + suggestionsArray[i].likeCount + "</span></div>"
+                                suggestion = "<div class=\"suggestionRow\" id=\"suggestion\"> <div class=\"postCat\">" + suggestionsArray[i].category +
+                                    "</div> <div class=\"postDetails\">" + suggestionsArray[i].desc + "</div> <button class=\"upvote\" id=\"postHeart" +
+                                    i + "\" onClick=\"LikePost(" + suggestionsArray[i].id + ", '" + suggestionsArray[i].id + "', " + i + ")\">&#10084</button> <span class=\"postLikes\" id=\"postLikes" + i +
+                                    "\">" + suggestionsArray[i].likeCount + "</span></div>"
                                 $("#suggestionsBox").append(
                                     suggestion
-                                );
+                                )
                             }
                         }
 
