@@ -230,7 +230,7 @@ namespace ProjectTemplate
             DataTable sqlDt = new DataTable("suggestions");
 
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
-            string sqlSelect = "select id, `desc`, submitter, category, status from suggestions where approved=1 order by id";
+            string sqlSelect = "select * from suggestions where approved=1 order by likeCount desc";
 
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
             MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
@@ -248,12 +248,42 @@ namespace ProjectTemplate
                     desc = sqlDt.Rows[i]["desc"].ToString(),
                     submitter = sqlDt.Rows[i]["submitter"].ToString(),
                     category = sqlDt.Rows[i]["category"].ToString(),
-                    status = sqlDt.Rows[i]["status"].ToString()
+                    status = sqlDt.Rows[i]["status"].ToString(),
+                    likeCount = sqlDt.Rows[i]["likeCount"].ToString(),
+                    usersLiked = sqlDt.Rows[i]["usersLiked"].ToString()
+
                 });
             }
 
             //convert the list of suggestionsto an array and return!
             return suggestions.ToArray();
+        }
+
+        //like the post
+        [WebMethod(EnableSession = true)]
+        public void LikeSuggestion(string postId, string users)
+        {
+            int userID = Convert.ToInt32(Session["id"]);
+            string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+            string userString = users + "#@userIDValue#";
+            
+            string sqlSelect = "update suggestions set likeCount=likeCount+1, usersliked=@userStringValue where ID=@postIdValue";
+
+            MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+            MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+            
+            sqlCommand.Parameters.AddWithValue("@postIdValue", HttpUtility.UrlDecode(postId));
+            sqlCommand.Parameters.AddWithValue("@usersValue", HttpUtility.UrlDecode(users));
+
+            sqlConnection.Open();
+            try
+            {
+                sqlCommand.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+            }
+            sqlConnection.Close();
         }
 
         //Returning suggestions based on the filter supplied
@@ -612,6 +642,13 @@ namespace ProjectTemplate
 
             //convert the list of suggestionsto an array and return!
             return account.ToArray();
+        }
+
+        //get accountID
+        [WebMethod(EnableSession = true)]
+        public object GetID()
+        {
+            return Session["id"];
         }
 
 

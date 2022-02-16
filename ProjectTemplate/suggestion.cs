@@ -14,5 +14,7 @@ namespace ProjectTemplate
         public string approved;
         public string status;
         public string category;
+        public string likeCount;
+        public string usersLiked;
     }
 }
