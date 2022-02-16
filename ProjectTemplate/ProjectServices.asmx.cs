@@ -108,6 +108,7 @@ namespace ProjectTemplate
                 if (approved == 1){ 
                     Session["id"] = sqlDt.Rows[0]["id"];
                     Session["admin"] = sqlDt.Rows[0]["admin"];
+                    success = true;
                 }
             }
             //return the result!
@@ -494,7 +495,7 @@ namespace ProjectTemplate
             //the only thing fancy about this query is SELECT LAST_INSERT_ID() at the end.  All that
             //does is tell mySql server to return the primary key of the last inserted row.
             string sqlSelect = "insert into Accounts (firstName, lastName, userName, pwd, emailAddress, logonStatus, admin, approved, secQuestion, secAnswer) " +
-                "values(@firstNameValue, @lastNameValue, @userNameValue, @pwdValue, @emailAddressValue, 0, 0, 0, @secQuestionValue, @secAnswerValue); SELECT LAST_INSERT_ID();";
+                "values(@firstNameValue, @lastNameValue, @userNameValue, @pwdValue, @emailAddressValue, 0, 2, 0, @secQuestionValue, @secAnswerValue); SELECT LAST_INSERT_ID();";
 
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
             MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
@@ -533,7 +534,7 @@ namespace ProjectTemplate
         public bool IsUser()
         {
             bool success = false;
-            if (Convert.ToInt32(Session["admin"]) == 0 || Convert.ToInt32(Session["admin"]) == 1)
+            if (Convert.ToInt32(Session["admin"]) == 2 || Convert.ToInt32(Session["admin"]) == 1)
                 success = true;
             else
                 success = false;
