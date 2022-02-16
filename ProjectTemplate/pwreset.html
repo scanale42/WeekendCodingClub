@@ -59,6 +59,7 @@
                             var pwInput1 = document.createElement("input");
                             pwInput1.type = "password";
                             pwInput1.id = "pwInput1";
+                            pwInput1.minlength = "10";
                             pwInput1.placeholder = "Enter New Password"
                             cell51.appendChild(pwInput1);
 
@@ -69,6 +70,7 @@
                             var pwInput2 = document.createElement("input");
                             pwInput2.type = "password";
                             pwInput2.id = "pwInput2";
+                            pwInput2.minlength = "10";
                             pwInput2.placeholder = "Re-Enter New Password"
                             cell61.appendChild(pwInput2);
 
@@ -101,36 +103,40 @@
         function ResetPassword(un) {
             var pw1 = document.getElementById("pwInput1").value;
             var pw2 = document.getElementById("pwInput2").value;
-            var answer = document.getElementById("secAnswer").value;
-            if (pw1 == pw2) {
-                var webMethod = "ProjectServices.asmx/ValidateSecurityQuestion";
-                var parameters = "{\"username\":\"" + encodeURI(un) + "\",\"answer\":\"" + encodeURI(answer) + "\",\"password\":\"" + encodeURI(pw1) +"\"}";
-                //jQuery ajax method
-                $.ajax({
-                    type: "POST",
-                    url: webMethod,
-                    data: parameters,
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (msg) {
-                        if (msg.d) {
-                            alert("Password Changed Successfully.");
-                            window.open("index.html", "_self")
-                        }
-                        else {
-                            alert("Passwords do not match or security question answer is incorrect");
-                        }
-                    },
-                    error: function (e) {
-                        alert("Something unexpected happened. You've been eaten by a grue2.");
-                    }
-                });
-
+            if (pw1.lenght < 10 || pw2.length < 10) {
+                alert("Password length must be 10 characters or more. Please try again")
             }
             else {
-                alert("Passwords do not match or security question answer is incorrect")
-            };
+                var answer = document.getElementById("secAnswer").value;
+                if (pw1 == pw2) {
+                    var webMethod = "ProjectServices.asmx/ValidateSecurityQuestion";
+                    var parameters = "{\"username\":\"" + encodeURI(un) + "\",\"answer\":\"" + encodeURI(answer) + "\",\"password\":\"" + encodeURI(pw1) + "\"}";
+                    //jQuery ajax method
+                    $.ajax({
+                        type: "POST",
+                        url: webMethod,
+                        data: parameters,
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (msg) {
+                            if (msg.d) {
+                                alert("Password Changed Successfully.");
+                                window.open("index.html", "_self")
+                            }
+                            else {
+                                alert("Passwords do not match or security question answer is incorrect");
+                            }
+                        },
+                        error: function (e) {
+                            alert("Something unexpected happened. You've been eaten by a grue2.");
+                        }
+                    });
 
+                }
+                else {
+                    alert("Passwords do not match or security question answer is incorrect")
+                };
+            }
 
         }
 

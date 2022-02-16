@@ -14,7 +14,7 @@
         uID = -1;
         postID = 0;
         description = "";
-
+        IsUser();
 
 
         //logs the user off both at the client and at the server
@@ -73,6 +73,28 @@
                     }
                     else {
                         //alert("Not an Admin");
+                    }
+
+                },
+            });
+        }
+
+    
+        //an ajax to check if the user is an admin
+        function IsUser() {
+            var webMethod = "ProjectServices.asmx/IsUser";
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.d) {
+
+                    }
+                    else {
+                        alert("Unauthorized Access:");
+                        window.open("index.html", "_self")
                     }
 
                 },
@@ -368,6 +390,7 @@
         //Taking parameters from the post we want to edit and passing them into our pop-up form.
         function EditSuggestion(id, desc, status, category) {
             paremeters = id + ", " + desc + ", " + status + ", " + category;
+            paremeters = id + ", " + desc + ", " + status + ", " + category;admin
             postID = id;
             description = desc
             OpenForm()
