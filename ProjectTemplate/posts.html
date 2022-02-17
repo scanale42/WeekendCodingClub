@@ -14,7 +14,9 @@
         uID = -1;
         postID = 0;
         description = "";
+        getID();
         IsUser();
+
 
 
         //logs the user off both at the client and at the server
@@ -281,15 +283,23 @@
                 success: function (msg) {
                     if (msg.d.length > 0) {
                         suggestionsArray = msg.d;
-                        getID();
+                        //getID();
                         //this clears out the div that will hold our suggestion info. Not sure if this is in use any more.
                         $("#suggestionsBox").empty();
                         middlePanelTitle.innerText = "Current Suggestions";
                         admin = false;
+                        likedAlready = false;
+
                         for (var i = 0; i < suggestionsArray.length; i++) {
                             var suggestion;
+                            stringToCompare = "#" + uID + "#";
+                            stringToCheck = suggestionsArray[i].usersLiked;
+                            likedAlready = stringToCheck.includes(stringToCompare);
+                           // alert(stringToCompare);
+                           // alert(stringToCheck);
+                           // alert(likedAlready);
 
-                            if (uID != suggestionsArray[i].usersLiked) {
+                            if (likedAlready == false) {
                                 suggestion = "<div class=\"suggestionRow\" id=\"suggestion\"> <div class=\"postCat\">" + suggestionsArray[i].category +
                                     "</div> <div class=\"postDetails\">" + suggestionsArray[i].desc + "</div> <button class=\"upvote\" id=\"postHeart" +
                                     i + "\" onClick=\"LikePost('" + suggestionsArray[i].id + "', '" + suggestionsArray[i].usersLiked + "')\">&#9825</button> <span class=\"postLikes\" id=\"postLikes" + i +
