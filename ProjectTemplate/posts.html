@@ -292,7 +292,7 @@
                             if (uID != suggestionsArray[i].usersLiked) {
                                 suggestion = "<div class=\"suggestionRow\" id=\"suggestion\"> <div class=\"postCat\">" + suggestionsArray[i].category +
                                     "</div> <div class=\"postDetails\">" + suggestionsArray[i].desc + "</div> <button class=\"upvote\" id=\"postHeart" +
-                                    i + "\" onClick=\"LikePost(" + suggestionsArray[i].id + ", '" + suggestionsArray[i].id + "', " + i + ")\">&#9825</button> <span class=\"postLikes\" id=\"postLikes" + i +
+                                    i + "\" onClick=\"LikePost('" + suggestionsArray[i].id + "', '" + suggestionsArray[i].usersLiked + "')\">&#9825</button> <span class=\"postLikes\" id=\"postLikes" + i +
                                     "\">" + suggestionsArray[i].likeCount + "</span></div>"
                                 $("#suggestionsBox").append(
                                     suggestion
@@ -301,7 +301,7 @@
                             else {
                                 suggestion = "<div class=\"suggestionRow\" id=\"suggestion\"> <div class=\"postCat\">" + suggestionsArray[i].category +
                                     "</div> <div class=\"postDetails\">" + suggestionsArray[i].desc + "</div> <button class=\"upvote\" id=\"postHeart" +
-                                    i + "\" onClick=\"LikePost(" + suggestionsArray[i].id + ", '" + suggestionsArray[i].id + "', " + i + ")\">&#10084</button> <span class=\"postLikes\" id=\"postLikes" + i +
+                                    i + "\" onClick=\"LikePost('" + suggestionsArray[i].id + "', '" + suggestionsArray[i].usersLiked + "', " + i + ")\">&#10084</button> <span class=\"postLikes\" id=\"postLikes" + i +
                                     "\">" + suggestionsArray[i].likeCount + "</span></div>"
                                 $("#suggestionsBox").append(
                                     suggestion
@@ -318,9 +318,9 @@
         }
 
         //This function is for letting users click the like button, and unclick it
-        function LikePost(postid, users, i) {
-            var heart = document.getElementById("postHeart" + i);
-
+        function LikePost(postid, users) {
+            //var heart = document.getElementById("postHeart" + i);
+            alert(users)
             var webMethod = "ProjectServices.asmx/LikeSuggestion";
             var parameters = "{\"postId\":\"" + encodeURI(postid) + "\",\"users\":\"" + encodeURI(users) + "\"}";
 
@@ -331,7 +331,7 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (msg) {
-                    heart.innerHTML = "&#10084";
+                    //heart.innerHTML = "&#10084";
                     LoadSuggestions();
                     alert("Post Liked");
                 },

@@ -265,15 +265,16 @@ namespace ProjectTemplate
         {
             int userID = Convert.ToInt32(Session["id"]);
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
-            string userString = users + "#@userIDValue#";
-            
-            string sqlSelect = "update suggestions set likeCount=likeCount+1, usersliked=@userStringValue where ID=@postIdValue";
+            // string userString = users + "#@userIDValue#";
+            string userString = users + userID + "#";
+
+            string sqlSelect = "update suggestions set likeCount=likeCount+1, usersLiked=@userStringValue where ID=@postIdValue";
 
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
             MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
             
             sqlCommand.Parameters.AddWithValue("@postIdValue", HttpUtility.UrlDecode(postId));
-            sqlCommand.Parameters.AddWithValue("@usersValue", HttpUtility.UrlDecode(users));
+            sqlCommand.Parameters.AddWithValue("@userStringValue", HttpUtility.UrlDecode(userString));
 
             sqlConnection.Open();
             try
