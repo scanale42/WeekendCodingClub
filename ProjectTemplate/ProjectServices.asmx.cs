@@ -77,7 +77,7 @@ namespace ProjectTemplate
             //our connection string comes from our web.config file like we talked about earlier
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
             //here's our query.  A basic select with nothing fancy.  Note the parameters that begin with @
-            string sqlSelect = "SELECT id, admin, approved FROM Accounts WHERE userName=@idValue and pwd=@passValue";
+            string sqlSelect = "SELECT id, admin, approved, invalidAttempts, lockedOut FROM Accounts WHERE userName=@idValue and pwd=@passValue";
 
             //set up our connection object to be ready to use our connection string
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
@@ -97,8 +97,8 @@ namespace ProjectTemplate
             DataTable sqlDt = new DataTable();
             //here we go filling it!
             sqlDa.Fill(sqlDt);
-            //check to see if any rows were returned.  If they were, it means it's 
-            //a legit account
+            //check to see if any rows were returned.  If they were, it means 
+            //it matched the username and password
             if (sqlDt.Rows.Count > 0)     
             {
                 //if we found an account, store the id and admin status in the session
@@ -111,7 +111,100 @@ namespace ProjectTemplate
                     success = true;
                 }
             }
+            // Otherwise - increment the lockout attempts
+        //    else
+           // {
+         //       sqlSelect = "update Accounts set invalidAttempts=invalidAttempts+1 where userName=@userIDValue";
+          //     MySqlConnection sqlConnection2 = new MySqlConnection(sqlConnectString);
+          //     MySqlCommand sqlCommand2 = new MySqlCommand(sqlSelect, sqlConnection2);
+        //        sqlCommand2.Parameters.AddWithValue("@userIDValue", HttpUtility.UrlDecode(uid));
+          //      sqlConnection2.Open();
+         //       try
+          //      {
+          //          sqlCommand2.ExecuteNonQuery();
+         //       }
+          //      catch (Exception e)
+         //       {
+          //      }
+         //       sqlConnection2.Close();
+        //    }
             //return the result!
+            return success;
+        }
+
+        [WebMethod(EnableSession = true)] //NOTICE: gotta enable session on each individual method
+        public bool IsLockedOut(string uid, int goodPass)
+        {
+            bool success = false;
+            string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+            string sqlSelect = "SELECT id, invalidAttempts, lockedOut FROM Accounts WHERE userName=@idValue";
+            MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+            MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+            sqlCommand.Parameters.AddWithValue("@idValue", HttpUtility.UrlDecode(uid));
+            MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+            DataTable sqlDt = new DataTable();
+            sqlDa.Fill(sqlDt);
+            if (sqlDt.Rows.Count > 0)
+            {
+                int invalidAttempts = Convert.ToInt32(sqlDt.Rows[0]["invalidAttempts"]);
+                int lockoutStatus = Convert.ToInt32(sqlDt.Rows[0]["lockedOut"]);
+                //Not locked out, but need to check if this attempt will be the last lockout
+                if (lockoutStatus == 0)
+                {
+                    // If a bad password was entered, then let's check to see if we need to lock it out or not
+                    if (goodPass == 0)
+                    {
+                        // Not locked out already, and isn't the third invalid attempt so let's increment
+                        if (invalidAttempts <= 1)
+                        {
+                            sqlSelect = "update Accounts set invalidAttempts=invalidAttempts+1 where userName=@userIDValue";
+                            MySqlConnection sqlConnection2 = new MySqlConnection(sqlConnectString);
+                            MySqlCommand sqlCommand2 = new MySqlCommand(sqlSelect, sqlConnection2);
+                            sqlCommand2.Parameters.AddWithValue("@userIDValue", HttpUtility.UrlDecode(uid));
+                            sqlConnection2.Open();
+                            try
+                            {
+                                sqlCommand2.ExecuteNonQuery();
+                            }
+                            catch (Exception e)
+                            {
+                            }
+                            sqlConnection2.Close();
+                            success = true;
+                        }
+                        // This means that the attempts are 2, so we need to incrment to 3, and lock out the account
+                        else
+                        {
+                            sqlSelect = "update Accounts set invalidAttempts=invalidAttempts+1, lockedOut=1 where userName=@userIDValue";
+                            MySqlConnection sqlConnection3 = new MySqlConnection(sqlConnectString);
+                            MySqlCommand sqlCommand3 = new MySqlCommand(sqlSelect, sqlConnection3);
+                            sqlCommand3.Parameters.AddWithValue("@userIDValue", HttpUtility.UrlDecode(uid));
+                            sqlConnection3.Open();
+                            try
+                            {
+                                sqlCommand3.ExecuteNonQuery();
+                            }
+                            catch (Exception e)
+                            {
+                            }
+                            sqlConnection3.Close();
+                            success = false;
+                        }
+                    }
+                    // the account isn't locked out and a valid password was entered.
+                    else
+                    {
+                        success = true;
+                    }
+
+
+                }
+                // It's locked out. Don't need to do anything else.
+                else
+                {
+                    success = false;
+                }
+            }
             return success;
         }
 

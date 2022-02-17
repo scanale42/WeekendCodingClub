@@ -27,9 +27,10 @@
 				}
 			});
         }
-        function LogOn(userId, pass) {
-            var webMethod = "ProjectServices.asmx/LogOn";
-            var parameters = "{\"uid\":\"" + encodeURI(userId) + "\",\"pass\":\"" + encodeURI(pass) + "\"}";
+
+        function IsLockedOut(userId, goodPass) {
+            var webMethod = "ProjectServices.asmx/IsLockedOut";
+            var parameters = "{\"uid\":\"" + encodeURI(userId) + "\",\"goodPass\":\"" + encodeURI(goodPass) + "\"}";
 
             //jQuery ajax method
             $.ajax({
@@ -41,10 +42,51 @@
                 success: function (msg) {
                     if (msg.d) {
                         //alert("success!");
-                        window.open("posts.html", "_self")
+                        //alert("Not locked out")
+                        if (goodPass == 1) {
+                            window.open("posts.html", "_self")
+                        }
+                        else {
+                            alert("logon failed");
+                        }
                     }
                     else {
-                        alert("logon failed");
+                        alert("Too many invalid login attempts. Account is locked out. Please contact a system administator.");
+                    }
+                },
+                error: function (e) {
+                    alert("Something unexpected happened. You've been eaten by a grue.");
+                }
+            });
+        }
+
+        function LogOn(userId, pass) {
+
+            var webMethod = "ProjectServices.asmx/LogOn";
+            var parameters = "{\"uid\":\"" + encodeURI(userId) + "\",\"pass\":\"" + encodeURI(pass) + "\"}";
+            //jQuery ajax method
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.d) {
+                        //alert("success!");
+                        goodPass = 1;
+                        IsLockedOut(userId, goodPass);
+                       // alert(lockedStatus)
+                        //if (lockedStatus == 1) {
+                        //    window.open("posts.html", "_self")
+                        //}
+                    }
+                    else {
+                        goodPass = 0;
+                        IsLockedOut(userId, goodPass);
+                        //if (lockedStatus == 1) {
+                        //    alert("logon failed");
+                       // }
                     }
                 },
                 error: function (e) {
