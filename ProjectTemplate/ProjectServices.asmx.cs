@@ -111,24 +111,7 @@ namespace ProjectTemplate
                     success = true;
                 }
             }
-            // Otherwise - increment the lockout attempts
-        //    else
-           // {
-         //       sqlSelect = "update Accounts set invalidAttempts=invalidAttempts+1 where userName=@userIDValue";
-          //     MySqlConnection sqlConnection2 = new MySqlConnection(sqlConnectString);
-          //     MySqlCommand sqlCommand2 = new MySqlCommand(sqlSelect, sqlConnection2);
-        //        sqlCommand2.Parameters.AddWithValue("@userIDValue", HttpUtility.UrlDecode(uid));
-          //      sqlConnection2.Open();
-         //       try
-          //      {
-          //          sqlCommand2.ExecuteNonQuery();
-         //       }
-          //      catch (Exception e)
-         //       {
-          //      }
-         //       sqlConnection2.Close();
-        //    }
-            //return the result!
+
             return success;
         }
 
@@ -206,6 +189,28 @@ namespace ProjectTemplate
                 }
             }
             return success;
+        }
+
+        //Resets the number of bad login attemtps to 0
+        [WebMethod(EnableSession = true)]
+        public void ResetBadAttempts(string userName)
+        {
+            string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+            string sqlSelect = "update Accounts set invalidAttempts=0 where userName=@userNameValue";
+
+            MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+            MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+            sqlCommand.Parameters.AddWithValue("@userNameValue", HttpUtility.UrlDecode(userName));
+            sqlConnection.Open();
+            try
+            {
+                sqlCommand.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+            }
+            sqlConnection.Close();
         }
 
 

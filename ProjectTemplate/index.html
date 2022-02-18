@@ -41,9 +41,8 @@
                 dataType: "json",
                 success: function (msg) {
                     if (msg.d) {
-                        //alert("success!");
-                        //alert("Not locked out")
                         if (goodPass == 1) {
+                            ResetBadAttempts(userId)
                             window.open("posts.html", "_self")
                         }
                         else {
@@ -73,24 +72,39 @@
                 dataType: "json",
                 success: function (msg) {
                     if (msg.d) {
-                        //alert("success!");
                         goodPass = 1;
                         IsLockedOut(userId, goodPass);
-                       // alert(lockedStatus)
-                        //if (lockedStatus == 1) {
-                        //    window.open("posts.html", "_self")
-                        //}
                     }
                     else {
                         goodPass = 0;
                         IsLockedOut(userId, goodPass);
-                        //if (lockedStatus == 1) {
-                        //    alert("logon failed");
-                       // }
                     }
                 },
                 error: function (e) {
                     alert("Something unexpected happened. You've been eaten by a grue.");
+                }
+            });
+        }
+
+        // If the logon is successful - then reset the bad attempts
+        function ResetBadAttempts(userName) {
+            var webMethod = "ProjectServices.asmx/ResetBadAttempts";
+            var parameters = "{\"userName\":\"" + encodeURI(userName) + "\"}";
+
+            //jQuery ajax method
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.d) {
+                    }
+
+                },
+                error: function (e) {
+                    alert("Wasn't able to reset bad attempts.");
                 }
             });
         }
