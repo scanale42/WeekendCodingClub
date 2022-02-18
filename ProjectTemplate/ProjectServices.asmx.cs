@@ -214,6 +214,29 @@ namespace ProjectTemplate
         }
 
 
+        //Resets the number of bad login attemtps to 0
+        [WebMethod(EnableSession = true)]
+        public void UnlockAccount(string userId)
+        {
+            string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+            string sqlSelect = "update Accounts set lockedOut=0 where ID=@userIdValue";
+
+            MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+            MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+            sqlCommand.Parameters.AddWithValue("@userIdValue", HttpUtility.UrlDecode(userId));
+            sqlConnection.Open();
+            try
+            {
+                sqlCommand.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+            }
+            sqlConnection.Close();
+        }
+
+
         //Function for logging of a user
         [WebMethod(EnableSession = true)]
         public bool LogOff()
