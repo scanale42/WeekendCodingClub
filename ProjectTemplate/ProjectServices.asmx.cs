@@ -451,7 +451,7 @@ namespace ProjectTemplate
             }
 
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
-            string sqlSelect = "select id, `desc`, submitter, category, status from suggestions " + selection + " order by id";
+            string sqlSelect = "select * from suggestions " + selection + " order by likeCount desc";
 
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
             MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
@@ -469,7 +469,9 @@ namespace ProjectTemplate
                     desc = sqlDt.Rows[i]["desc"].ToString(),
                     submitter = sqlDt.Rows[i]["submitter"].ToString(),
                     category = sqlDt.Rows[i]["category"].ToString(),
-                    status = sqlDt.Rows[i]["status"].ToString()
+                    status = sqlDt.Rows[i]["status"].ToString(),
+                    likeCount = sqlDt.Rows[i]["likeCount"].ToString(),
+                    usersLiked = sqlDt.Rows[i]["usersLiked"].ToString()
                 });
             }
 

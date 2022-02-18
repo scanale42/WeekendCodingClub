@@ -287,7 +287,6 @@
                         //this clears out the div that will hold our suggestion info. Not sure if this is in use any more.
                         $("#suggestionsBox").empty();
                         middlePanelTitle.innerText = "Current Suggestions";
-                        admin = false;
                         likedAlready = false;
 
                         for (var i = 0; i < suggestionsArray.length; i++) {
@@ -295,9 +294,6 @@
                             stringToCompare = "#" + uID + "#";
                             stringToCheck = suggestionsArray[i].usersLiked;
                             likedAlready = stringToCheck.includes(stringToCompare);
-                           // alert(stringToCompare);
-                           // alert(stringToCheck);
-                           // alert(likedAlready);
 
                             if (likedAlready == false) {
                                 suggestion = "<div class=\"suggestionRow\" id=\"suggestion\"> <div class=\"postCat\">" + suggestionsArray[i].category +
@@ -311,7 +307,7 @@
                             else {
                                 suggestion = "<div class=\"suggestionRow\" id=\"suggestion\"> <div class=\"postCat\">" + suggestionsArray[i].category +
                                     "</div> <div class=\"postDetails\">" + suggestionsArray[i].desc + "</div> <button class=\"upvote\" id=\"postHeart" +
-                                    i + "\" onClick=\"LikePost('" + suggestionsArray[i].id + "', '" + suggestionsArray[i].usersLiked + "', " + i + ")\">&#10084</button> <span class=\"postLikes\" id=\"postLikes" + i +
+                                    i + "\" onClick=\"UnlikePost('" + suggestionsArray[i].id + "', '" + suggestionsArray[i].usersLiked + "')\">&#10084</button> <span class=\"postLikes\" id=\"postLikes" + i +
                                     "\">" + suggestionsArray[i].likeCount + "</span></div>"
                                 $("#suggestionsBox").append(
                                     suggestion
@@ -329,8 +325,6 @@
 
         //This function is for letting users click the like button, and unclick it
         function LikePost(postid, users) {
-            //var heart = document.getElementById("postHeart" + i);
-            alert(users)
             var webMethod = "ProjectServices.asmx/LikeSuggestion";
             var parameters = "{\"postId\":\"" + encodeURI(postid) + "\",\"users\":\"" + encodeURI(users) + "\"}";
 
@@ -341,12 +335,10 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (msg) {
-                    //heart.innerHTML = "&#10084";
                     LoadSuggestions();
-                    alert("Post Liked");
                 },
                 error: function (e) {
-                    alert("fail message: "+ e); 
+                    alert("Failed to Like message: "+ e); 
                 }
             });
 
@@ -357,7 +349,7 @@
         function FilterSuggestions(filter) {
             var webMethod = "ProjectServices.asmx/FilterSuggestions";
             var parameters = "{\"filter\":\"" + encodeURI(filter) + "\"}";
-            // alert(parameters)
+
             $.ajax({
                 type: "POST",
                 url: webMethod,
@@ -365,22 +357,38 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (msg) {
+                    likedAlready = false;
                     if (msg.d.length > 0) {
                         suggestionsArray = msg.d;
                         //this clears out the div that will hold our suggestion info. Not sure if this is in use any more.
                         $("#suggestionsBox").empty();
                         middlePanelTitle.innerText = filter + " Suggestions";
-                        admin = false;
+
                         for (var i = 0; i < suggestionsArray.length; i++) {
                             var suggestion;
 
-                            suggestion = "<div class='suggestionRow' id='suggestion'> <div class='postCat'>" + suggestionsArray[i].category +
-                                "</div> <div class='postDetails'>" + suggestionsArray[i].desc + "</div> <button class='upvote' id='postHeart" +
-                                i + "' onClick='LikePost("+ i.id + ", " + i.likeCount + ", " + i +
-                                ")'>&#9825</button> <span class='postLikes' id='postLikes" + i + "'>" + suggestionsArray[i].likeCount + "</span></div>"
-                            $("#suggestionsBox").append(
-                                suggestion
-                            );
+                            stringToCompare = "#" + uID + "#";
+                            stringToCheck = suggestionsArray[i].usersLiked;
+                            likedAlready = stringToCheck.includes(stringToCompare);
+
+                            if (likedAlready == false) {
+                                suggestion = "<div class=\"suggestionRow\" id=\"suggestion\"> <div class=\"postCat\">" + suggestionsArray[i].category +
+                                    "</div> <div class=\"postDetails\">" + suggestionsArray[i].desc + "</div> <button class=\"upvote\" id=\"postHeart" +
+                                    i + "\" onClick=\"LikePost('" + suggestionsArray[i].id + "', '" + suggestionsArray[i].usersLiked + "')\">&#9825</button> <span class=\"postLikes\" id=\"postLikes" + i +
+                                    "\">" + suggestionsArray[i].likeCount + "</span></div>"
+                                $("#suggestionsBox").append(
+                                    suggestion
+                                );
+                            }
+                            else {
+                                suggestion = "<div class=\"suggestionRow\" id=\"suggestion\"> <div class=\"postCat\">" + suggestionsArray[i].category +
+                                    "</div> <div class=\"postDetails\">" + suggestionsArray[i].desc + "</div> <button class=\"upvote\" id=\"postHeart" +
+                                    i + "\" onClick=\"UnlikePost('" + suggestionsArray[i].id + "', '" + suggestionsArray[i].usersLiked + "')\">&#10084</button> <span class=\"postLikes\" id=\"postLikes" + i +
+                                    "\">" + suggestionsArray[i].likeCount + "</span></div>"
+                                $("#suggestionsBox").append(
+                                    suggestion
+                                )
+                            }
                         }
                     }
                     else {
