@@ -530,6 +530,25 @@
             });
         }
 
+        //an ajax to approve an account request
+        function UnlockAccount(userId) {
+            var webMethod = "ProjectServices.asmx/UnlockAccount";
+            var parameters = "{\"userId\":\"" + encodeURI(userId) + "\"}";
+
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                },
+                error: function (e) {
+                    alert("boo...");
+                }
+            });
+        }
+
 
         //This function shows the admin menu
         function ShowMenu() {
