@@ -908,7 +908,7 @@ namespace ProjectTemplate
             int userID = Convert.ToInt32(Session["id"]);
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
 
-            string sqlSelect = "update Accounts set active=1 where id=@idValue";
+            string sqlSelect = "update Accounts set active=1, invalidAttempts=0, lockedOut=0 where id=@idValue";
 
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
             MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
