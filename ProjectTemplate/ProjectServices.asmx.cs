@@ -77,7 +77,7 @@ namespace ProjectTemplate
             //our connection string comes from our web.config file like we talked about earlier
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
             //here's our query.  A basic select with nothing fancy.  Note the parameters that begin with @
-            string sqlSelect = "SELECT id, admin, approved, invalidAttempts, lockedOut FROM Accounts WHERE userName=@idValue and pwd=@passValue";
+            string sqlSelect = "SELECT id, admin, approved, invalidAttempts, userName, lockedOut FROM Accounts WHERE userName=@idValue and pwd=@passValue";
 
             //set up our connection object to be ready to use our connection string
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
@@ -108,6 +108,8 @@ namespace ProjectTemplate
                 if (approved == 1){ 
                     Session["id"] = sqlDt.Rows[0]["id"];
                     Session["admin"] = sqlDt.Rows[0]["admin"];
+                    Session["userName"] = sqlDt.Rows[0]["userName"];
+
                     success = true;
                 }
             }
@@ -825,7 +827,17 @@ namespace ProjectTemplate
         [WebMethod(EnableSession = true)]
         public object GetID()
         {
-            return Session["id"];
+            var userID = Session["id"];
+            return userID;
+        }
+
+
+        //get userName
+        [WebMethod(EnableSession = true)]
+        public object GetUserName()
+        {
+            var userName = Session["userName"];
+            return userName;
         }
 
 

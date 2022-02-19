@@ -12,9 +12,11 @@
 
         //Global variable used to store information about posts we're trying to edit and pass onto another function that can't easily handle it
         uID = -1;
+        loggedOnUser = "";
         postID = 0;
         description = "";
-        getID();
+        GetID();
+        GetUserName();
         IsUser();
         editUserID = 0;
 
@@ -45,7 +47,7 @@
             });
         }
 
-        function getID() {
+        function GetID() {
             var webMethod = "ProjectServices.asmx/GetID";
             $.ajax({
                 type: "POST",
@@ -57,6 +59,21 @@
                         uID = msg.d;
                     }
 
+                },
+            });
+        }
+
+        //Function to get current logged on user and put it in the top of the screen
+        function GetUserName() {
+            var webMethod = "ProjectServices.asmx/GetUserName";
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    loggedOnUser = msg.d;
+                    userNameText.innerText = loggedOnUser;
                 },
             });
         }
@@ -1043,6 +1060,7 @@
 <body onload="LoadSuggestions(); CheckAdmin();">
     <header class="homeBar">
         <h1>Devil's Suggestion</h1>
+        <span id="userNameText"></span>
         <a href="#" onclick="LogOff()">Log Off</a>
     </header>
 
