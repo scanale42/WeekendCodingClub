@@ -533,6 +533,48 @@ namespace ProjectTemplate
             }
         }
 
+        //Load all user accounts 
+        [WebMethod(EnableSession = true)]
+        public Account[] LoadAccounts()
+        {
+            if (Convert.ToInt32(Session["admin"]) == 1)
+            {
+                DataTable sqlDt = new DataTable("accounts");
+
+                string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+                string sqlSelect = "select * from Accounts order by active desc";
+
+                MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+                MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+                MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+                sqlDa.Fill(sqlDt);
+
+                List<Account> account = new List<Account>();
+                for (int i = 0; i < sqlDt.Rows.Count; i++)
+                {
+
+                    account.Add(new Account
+                    {
+                        id = Convert.ToInt32(sqlDt.Rows[i]["id"]),
+                        firstName = sqlDt.Rows[i]["firstName"].ToString(),
+                        lastName = sqlDt.Rows[i]["lastName"].ToString(),
+                        userName = sqlDt.Rows[i]["userName"].ToString(),
+                        emailAddress = sqlDt.Rows[i]["emailAddress"].ToString(),
+                        admin = sqlDt.Rows[i]["admin"].ToString(),
+                        active = sqlDt.Rows[i]["active"].ToString()
+                    });
+                }
+
+                //convert the list of suggestionsto an array and return!
+                return account.ToArray();
+            }
+            else
+            {
+                //if they're not logged in, return an empty array
+                return new Account[0];
+            }
+        }
 
         //Grabbing all of the Accounts that have not been approved yet. 
         [WebMethod(EnableSession = true)]
@@ -833,6 +875,140 @@ namespace ProjectTemplate
             return success;
         }
 
+        //Deactivate account
+        [WebMethod(EnableSession = true)]
+        public void DeactivateAccount(string id)
+        {
+            int userID = Convert.ToInt32(Session["id"]);
+            string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+
+            string sqlSelect = "update Accounts set active=0, approved=0 where id=@idValue";
+
+            MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+            MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+            sqlCommand.Parameters.AddWithValue("@idValue", HttpUtility.UrlDecode(id));
+
+            sqlConnection.Open();
+            try
+            {
+                sqlCommand.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+            }
+            sqlConnection.Close();
+
+        }
+
+        //Activate account
+        [WebMethod(EnableSession = true)]
+        public void ActivateAccount(string id)
+        {
+            int userID = Convert.ToInt32(Session["id"]);
+            string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+
+            string sqlSelect = "update Accounts set active=1 where id=@idValue";
+
+            MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+            MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+            sqlCommand.Parameters.AddWithValue("@idValue", HttpUtility.UrlDecode(id));
+
+            sqlConnection.Open();
+            try
+            {
+                sqlCommand.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+            }
+            sqlConnection.Close();
+
+        }
+
+
+        //Retrieve account to edit
+        [WebMethod(EnableSession = true)]
+        public Account[] GetAccount(string id)
+        {
+            if (Convert.ToInt32(Session["admin"]) == 1)
+            {
+                DataTable sqlDt = new DataTable("accounts");
+
+                string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+                string sqlSelect = "select * from Accounts where ID=@idValue";
+
+                MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+                MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+
+                sqlCommand.Parameters.AddWithValue("@idValue", HttpUtility.UrlDecode(id));
+
+                MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+                sqlDa.Fill(sqlDt);
+
+                List<Account> account = new List<Account>();
+                for (int i = 0; i < sqlDt.Rows.Count; i++)
+                {
+
+                    account.Add(new Account
+                    {
+                        id = Convert.ToInt32(sqlDt.Rows[i]["id"]),
+                        firstName = sqlDt.Rows[i]["firstName"].ToString(),
+                        lastName = sqlDt.Rows[i]["lastName"].ToString(),
+                        userName = sqlDt.Rows[i]["userName"].ToString(),
+                        password = sqlDt.Rows[i]["pwd"].ToString(),
+                        emailAddress = sqlDt.Rows[i]["emailAddress"].ToString(),
+                        secAnswer = sqlDt.Rows[i]["secAnswer"].ToString(),
+                        secQuestion = sqlDt.Rows[i]["secQuestion"].ToString(),
+                        admin = sqlDt.Rows[i]["admin"].ToString(),
+                    });
+                }
+
+                //convert the list of suggestionsto an array and return!
+                return account.ToArray();
+            }
+            else
+            {
+                //if they're not logged in, return an empty array
+                return new Account[0];
+            }
+        }
+
+        //Update account
+        [WebMethod(EnableSession = true)]
+        public void UpdateAccount(string id, string fName, string lName, string uName, string email, string pwd, string secQ, string secA, string admin)
+        {
+            int userID = Convert.ToInt32(Session["id"]);
+            string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+
+            string sqlSelect = "update Accounts set firstName=@fNameValue, lastName=@lNameValue, userName=@uNameValue, pwd=@pwdValue, emailAddress=@emailValue, admin=@adminValue, secQuestion=@secQValue, secAnswer=@secAValue where ID=@idValue";
+
+            MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+            MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+            sqlCommand.Parameters.AddWithValue("@idValue", HttpUtility.UrlDecode(id));
+            sqlCommand.Parameters.AddWithValue("@fNameValue", HttpUtility.UrlDecode(fName));
+            sqlCommand.Parameters.AddWithValue("@lNameValue", HttpUtility.UrlDecode(lName));
+            sqlCommand.Parameters.AddWithValue("@uNameValue", HttpUtility.UrlDecode(uName));
+            sqlCommand.Parameters.AddWithValue("@emailValue", HttpUtility.UrlDecode(email));
+            sqlCommand.Parameters.AddWithValue("@pwdValue", HttpUtility.UrlDecode(pwd));
+            sqlCommand.Parameters.AddWithValue("@secQValue", HttpUtility.UrlDecode(secQ));
+            sqlCommand.Parameters.AddWithValue("@secAValue", HttpUtility.UrlDecode(secA));
+            sqlCommand.Parameters.AddWithValue("@adminValue", HttpUtility.UrlDecode(admin));
+
+            sqlConnection.Open();
+            try
+            {
+                sqlCommand.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+            }
+            sqlConnection.Close();
+
+        }
 
     }
 }

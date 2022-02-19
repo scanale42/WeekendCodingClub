@@ -205,6 +205,8 @@
                         $("#suggestionsBox").empty();
                         middlePanelTitle.innerText = "Review Suggestions";
                         admin = false;
+                        document.getElementById('topPost').style.visibility = 'hidden';
+                        $('#editAccountPanel').css("visibility", "hidden");
                         for (var i = 0; i < suggestionsArray.length; i++) {
                             var suggestion;
 
@@ -245,6 +247,8 @@
                         $("#suggestionsBox").empty();
                         admin = false;
                         middlePanelTitle.innerText = "Manage Suggestions";
+                        document.getElementById('topPost').style.visibility = 'hidden';
+                        $('#editAccountPanel').css("visibility", "hidden");
                         for (var i = 0; i < suggestionsArray.length; i++) {
                             var suggestion;
 
@@ -288,6 +292,8 @@
                         $("#suggestionsBox").empty();
                         middlePanelTitle.innerText = "Current Suggestions";
                         likedAlready = false;
+                        document.getElementById('topPost').style.visibility = 'visible';
+                        $('#editAccountPanel').css("visibility", "hidden");
 
                         for (var i = 0; i < suggestionsArray.length; i++) {
                             var suggestion;
@@ -350,6 +356,9 @@
             var webMethod = "ProjectServices.asmx/FilterSuggestions";
             var parameters = "{\"filter\":\"" + encodeURI(filter) + "\"}";
 
+            $('#editAccountPanel').css("visibility", "hidden");
+            document.getElementById('topPost').style.visibility = 'hidden';
+
             $.ajax({
                 type: "POST",
                 url: webMethod,
@@ -392,8 +401,9 @@
                         }
                     }
                     else {
-                        message = "No suggestions to approve"
-                        $("#unapprovedSuggestionsBox").append(
+                        $("#suggestionsBox").empty();
+                        var message = "<div class='suggestionRow' id='suggestion'>No suggestions</div><br><br>"
+                        $("#suggestionsBox").append(
                             message
                         );
 
@@ -453,9 +463,64 @@
             document.getElementById("myForm").style.display = "none";
         } 
 
+        //this function grabs all the user accounts and displays them
+        function LoadAccounts() {
+            var webMethod = "ProjectServices.asmx/LoadAccounts";
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+
+                    if (msg.d.length > 0) {
+                        accountsArray = msg.d;
+                        //this clears out the div that will hold our suggestion info. Not sure if this is in use any more.
+                        $("#suggestionsBox").empty();
+                        middlePanelTitle.innerText = "Manage Accounts";
+                        admin = false;
+                        document.getElementById('topPost').style.visibility = 'hidden';
+                        $('#editAccountPanel').css("visibility", "hidden");
+
+                        for (var i = 0; i < accountsArray.length; i++) {
+                            var account;
+                            var status = ' Active';
+
+                            if (accountsArray[i].active == '1') {
+
+                                account = "<div class='suggestionRow' id='account'><button onclick=\"EditAccount("
+                                    + accountsArray[i].id +
+                                    ")\">Edit</button>  <b>First Name </b> "
+                                    + accountsArray[i].firstName + " <b>Last Name:</b> " + accountsArray[i].lastName + " <b> Username: </b> " + accountsArray[i].userName + " <b>Status:</b>" +
+                                    status + "<button style=\"float: right;\" onclick=\"DeactivateAccount(" + accountsArray[i].id + ")\">Deactivate</button></div > <br><br>"
+                                $("#suggestionsBox").append(
+                                    account
+                                );
+                            }
+                            else {
+                                status = ' Inactive';
+                                account = "<div class='suggestionRow' id='account'><button onclick=\"ActivateAccount(" + accountsArray[i].id + ")\">Activate</button> <b>First Name </b> "
+                                    + accountsArray[i].firstName + " <b>Last Name:</b> " + accountsArray[i].lastName + " <b> Username: </b> " + accountsArray[i].userName + " <b>Status:</b>" +
+                                    status + "</div><br><br>"
+                                $("#suggestionsBox").append(
+                                    account
+                                );
+                            }
+                        }
+
+                    }
+
+                },
+                error: function (e) {
+                    alert("Something unexpected happened. You've been eaten by a grue.");
+                }
+            });
+        }  
+
         //this function grabs all the unapproved accounts and displays them
         function LoadUnapprovedAccounts() {
             var webMethod = "ProjectServices.asmx/GetUnapprovedAccounts";
+            $('#editAccountPanel').css("visibility", "hidden");
             $.ajax({
                 type: "POST",
                 url: webMethod,
@@ -557,6 +622,150 @@
             });
         }
 
+        function DeactivateAccount(id) {
+
+            if (confirm('Are you sure you want to delete this account?') == true) {
+                var webMethod = "ProjectServices.asmx/DeactivateAccount";
+                var parameters = "{\"id\":\"" + encodeURI(id) + "\"}";
+
+                $.ajax({
+                    type: "POST",
+                    url: webMethod,
+                    data: parameters,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (msg) {
+                        LoadAccounts()
+                    },
+                    error: function (e) {
+                        alert("boo...");
+                    }
+                });
+            }
+
+        }
+
+        function ActivateAccount(id) {
+
+            if (confirm('Are you sure you want to activate this account?') == true) {
+                var webMethod = "ProjectServices.asmx/ActivateAccount";
+                var parameters = "{\"id\":\"" + encodeURI(id) + "\"}";
+
+                $.ajax({
+                    type: "POST",
+                    url: webMethod,
+                    data: parameters,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (msg) {
+                        LoadAccounts()
+                    },
+                    error: function (e) {
+                        alert("boo...");
+                    }
+                });
+            }
+
+        }
+
+        // edit account
+        function EditAccount(id) {
+            var webMethod = "ProjectServices.asmx/GetAccount";
+            var parameters = "{\"id\":\"" + encodeURI(id) + "\"}";
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    $("#suggestionsBox").empty();
+                    middlePanelTitle.innerText = "Edit Account";
+                    admin = false;
+                    document.getElementById('topPost').style.visibility = 'hidden';
+                    $('#editAccountPanel').css("visibility", "visible");
+
+                    if (msg.d.length > 0) {
+                        account = msg.d;
+                        for (var i = 0; i < account.length; i++) {
+                            var fName = account[i].firstName;
+                            var lName = account[i].lastName;
+                            var uName = account[i].userName;
+                            var eAdd = account[i].emailAddress;
+                            var secQ = account[i].secQuestion;
+                            var secA = account[i].secAnswer;
+                            var pw = account[i].password;
+                            var isadmin;
+                            if (account[i].admin == 2) {
+                                isadmin = 'Yes';
+
+                            }
+                            else {
+                                isadmin = 'No';
+                            }
+
+                            $('#accountID').val(id);
+                            $('#editLogonId').val(uName);
+                            $('#editLogonPassword').val(pw);
+                            $('#editLogonFName').val(fName);
+                            $('#editLogonLName').val(lName);
+                            $('#editLogonEmail').val(eAdd);
+                            $('#currentSecQ').val(secQ);
+                            $('#editSecAnswer').val(secA);
+                            $('#editAdmin').val(isadmin);
+                            $('#currentSecQ').attr('readonly', true);
+                        }
+                    }
+
+                },
+                error: function (e) {
+                    alert("An error has occurred.");
+                }
+            });
+
+
+        }
+
+        // save account updates
+        function UpdateAccount() {
+            var id = document.getElementById('accountID').value;
+            var userName = document.getElementById('editLogonId').value;
+            var pwd = document.getElementById('editLogonPassword').value;
+            var firstName = document.getElementById('editLogonFName').value;
+            var lastName = document.getElementById('editLogonLName').value;
+            var emailAddress = document.getElementById('editLogonEmail').value;
+            var secQuestion = document.getElementById('editSecQuestion').value;
+            var secAnswer = document.getElementById('editSecAnswer').value;
+            var isadmin = document.getElementById('editAdmin').value;
+
+            if (isadmin == 'Yes') {
+                isadmin = 2;
+            }
+            else { isadmin = 1; }
+
+            var webMethod = "ProjectServices.asmx/UpdateAccount";
+            var parameters = "{\"id\":\"" + encodeURI(id) + "\",\"firstName\":\"" + encodeURI(firstName) + "\",\"lastName\":\"" + encodeURI(lastName) + "\",\"userName\":\"" + encodeURI(userName) +
+                "\",\"emailAddress\":\"" + encodeURI(emailAddress) + "\",\"pwd\":\"" + encodeURI(pwd) + "\",\"secQuestion\":\"" + encodeURI(secQuestion) +
+                "\",\"secAnswer\":\"" + encodeURI(secAnswer) + "\",\"admin\":\"" + encodeURI(isadmin) + "\"}";
+
+            //jQuery ajax method
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    alert('This account has been updated.')
+
+                },
+                error: function (err) {
+                    alert("An error has occurred.");
+                }
+            });
+
+        }
+
 
         //This function shows the admin menu
         function ShowMenu() {
@@ -572,6 +781,15 @@
             $("#adminLink").text("");
         }
 
+        // show/hide password
+        function ShowPassword() {
+            var x = document.getElementById("editLogonPassword");
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        }
 
 
     </script>
@@ -835,6 +1053,70 @@
             <h2 id="middlePanelTitle"> Current Suggestions</h2><hr>
             <h3 id="topPost">Top Post</h3>
             <section class="suggestionsBox" id="suggestionsBox"></section>
+            <section class="editAccountPanel" id="editAccountPanel" style="visibility:hidden">
+                <div id="editAccountPanel">
+                    <form>
+                        <table>
+                            <tr>
+                                <td>
+                                    User Name:
+                                </td>
+                                <td>
+                                    <input type="text" id="editLogonId" />
+                                </td>
+                                <td>
+                                    <input type="text" id="accountID" style="visibility:hidden;" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Password:</td>
+                                <td><input type="password" id="editLogonPassword" minlength="10" /> </td>
+                                <td><label for="show">Show Password</label><input style="margin-left:3px;" type="checkbox" onclick="ShowPassword()" /></td>
+                            </tr>
+                            <tr>
+                                <td>First Name:</td>
+                                <td><input type="text" id="editLogonFName" /></td>
+                            </tr>
+                            <tr>
+                                <td>Last Name:</td>
+                                <td><input type="text" id="editLogonLName" /></td>
+                            </tr>
+                            <tr>
+                                <td>Email Address:</td>
+                                <td><input type="text" id="editLogonEmail" /></td>
+                            </tr>
+                            <tr>
+                                <td>Security Question:</td>
+                                <td><input type="text" id="currentSecQ" /></td>
+                                <td>
+                                    <select id="editSecQuestion" placeholder="Choose a security question" required>
+                                        <option disabled selected> -- Select a Security Question -- </option>
+                                        <option value="Pie or Cake?">Pie or Cake?</option>
+                                        <option value="Favorite Number between 1-100">Favorite Number between 1-100</option>
+                                        <option value="Favorite Color">Favorite Color</option>
+                                        <option value="Are you a Cop? Don't lie">Are you a Cop? Don't lie</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Security Answer:</td>
+                                <td><input type="text" id="editSecAnswer" /></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Admin:
+                                </td>
+                                <td><input type="text" id="editAdmin" /></td>
+                            </tr>
+                            <tr>
+                                <td><button onclick="UpdateAccount();">Save</button></td>
+                                <td><a href="javascript:void(0);" onclick="LoadAccounts(); ShowPassword();" style="float:right;">Return</a></td>
+                            </tr>
+                        </table>
+                    </form>
+
+                </div>
+            </section>
         </main>
 
         <div class="adminContainer">
