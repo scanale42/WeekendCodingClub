@@ -963,6 +963,7 @@ namespace ProjectTemplate
                         secAnswer = sqlDt.Rows[i]["secAnswer"].ToString(),
                         secQuestion = sqlDt.Rows[i]["secQuestion"].ToString(),
                         admin = sqlDt.Rows[i]["admin"].ToString(),
+                        lockedOut = sqlDt.Rows[i]["lockedOut"].ToString(),
                     });
                 }
 

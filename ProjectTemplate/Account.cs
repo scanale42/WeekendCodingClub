@@ -17,5 +17,7 @@ namespace ProjectTemplate
         public string secAnswer;
         public string active;
         public string admin;
+        public string lockedOut;
+        public string invalidAttempts;
     }
 }

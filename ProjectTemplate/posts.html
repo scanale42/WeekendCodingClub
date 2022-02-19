@@ -16,6 +16,7 @@
         description = "";
         getID();
         IsUser();
+        editUserID = 0;
 
 
 
@@ -604,9 +605,10 @@
         }
 
         //an ajax to approve an account request
-        function UnlockAccount(userId) {
+        function UnlockAccount() {
+            alert(editUserID);
             var webMethod = "ProjectServices.asmx/UnlockAccount";
-            var parameters = "{\"userId\":\"" + encodeURI(userId) + "\"}";
+            var parameters = "{\"userId\":\"" + encodeURI(editUserID) + "\"}";
 
             $.ajax({
                 type: "POST",
@@ -615,9 +617,12 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (msg) {
+                    alert("Account Unlocked")
+                    $('#editLockedOut').val('No');
                 },
                 error: function (e) {
-                    alert("boo...");
+                    alert("Account Not Unlocked");
+
                 }
             });
         }
@@ -688,6 +693,7 @@
                     if (msg.d.length > 0) {
                         account = msg.d;
                         for (var i = 0; i < account.length; i++) {
+                            editUserID = account[i].id;
                             var fName = account[i].firstName;
                             var lName = account[i].lastName;
                             var uName = account[i].userName;
@@ -696,13 +702,22 @@
                             var secA = account[i].secAnswer;
                             var pw = account[i].password;
                             var isadmin;
-                            if (account[i].admin == 2) {
+                            var isLockedOut;
+                            if (account[i].admin == 1) {
                                 isadmin = 'Yes';
 
                             }
                             else {
                                 isadmin = 'No';
                             }
+                            if (account[i].lockedOut == 1) {
+                                isLockedOut = 'Yes'
+                            }
+                            else {
+                                isLockedOut = 'No'
+                            }
+
+
 
                             $('#accountID').val(id);
                             $('#editLogonId').val(uName);
@@ -713,6 +728,7 @@
                             $('#currentSecQ').val(secQ);
                             $('#editSecAnswer').val(secA);
                             $('#editAdmin').val(isadmin);
+                            $('#editLockedOut').val(isLockedOut);
                             $('#currentSecQ').attr('readonly', true);
                         }
                     }
@@ -739,9 +755,9 @@
             var isadmin = document.getElementById('editAdmin').value;
 
             if (isadmin == 'Yes') {
-                isadmin = 2;
+                isadmin = 1;
             }
-            else { isadmin = 1; }
+            else { isadmin = 2; }
 
             var webMethod = "ProjectServices.asmx/UpdateAccount";
             var parameters = "{\"id\":\"" + encodeURI(id) + "\",\"firstName\":\"" + encodeURI(firstName) + "\",\"lastName\":\"" + encodeURI(lastName) + "\",\"userName\":\"" + encodeURI(userName) +
@@ -1107,6 +1123,13 @@
                                     Admin:
                                 </td>
                                 <td><input type="text" id="editAdmin" /></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    LockedOut?
+                                </td>
+                                <td><input type="text" id="editLockedOut" /></td>
+                                <td><button onclick="UnlockAccount();">Unlock</button></td>
                             </tr>
                             <tr>
                                 <td><button onclick="UpdateAccount();">Save</button></td>
