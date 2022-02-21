@@ -1014,16 +1014,21 @@
             margin-right: 10px;
         }
 
-        #filterPanel {
+        #filterPanel, #adminPanel {
             padding: 10px;
             margin-right: 30px;
         }
 
         .buttons {
-            width: 15vw;
+            width: 13vw;
             border-radius: 30%;
             background-color: white;
             color: black;
+        }
+
+        .buttons:focus {
+            color: white;
+            background-color: #8C1D40;
         }
 
 
@@ -1203,6 +1208,7 @@
                 <section id="filterPanel">
                     <h3>Filters</h3>
                     <div id="buttons">
+                        <button class="buttons" onclick="LoadSuggestions()">Clear Filters</button>
                         <button class="buttons" id="filterLink" onclick="FilterSuggestions('Employee')">Employees Suggestions</button><br />
                         <button class="buttons" id="filterLink" onclick="FilterSuggestions('Hours')">Hours Suggestions</button><br />
                         <button class="buttons" id="filterLink" onclick="FilterSuggestions('HR')">HR Suggestions</button><br />
