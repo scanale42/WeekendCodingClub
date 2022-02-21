@@ -8,8 +8,6 @@
 
     <!--YOUR OWN JAVASCRIPT CAN GO RIGHT HERE-->
     <script type="text/javascript">
-
-
         //Global variable used to store information about posts we're trying to edit and pass onto another function that can't easily handle it
         uID = -1;
         loggedOnUser = "";
@@ -362,7 +360,7 @@
                     LoadSuggestions();
                 },
                 error: function (e) {
-                    alert("Failed to Like message: "+ e); 
+                    alert("Failed to like message: "+ e); 
                 }
             });
 
@@ -844,16 +842,17 @@
 
         .homeBar {
             background: #FFC627;
-            padding: 0;
-            font-size: 26px;
-            height: 15vh;
+            padding: 20px;
+            font-size: 1.5vw;
+            min-height: 80px;
+            height: 13vh;
             width: 100vw;
             text-align: center;
         }
 
         .container {
             display: grid;
-            grid-template-columns: 25vw 50vw 25vw;
+            grid-template-columns: 25vw 55vw 20vw;
             text-align: left;
         }
 
@@ -985,7 +984,46 @@
             text-align: center;
         }
 
-        .postLikes {
+        h3 {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        div#buttons {
+            text-align: center;
+        }
+
+        button.buttons {
+            margin: 2px;
+        }
+
+        span#home {
+            text-align: left;
+            float: left;
+        }
+
+        button#home, button#logOff {
+            font-size: 15px;
+            border: 12px solid #8C1D40;
+            border-radius: 60%;
+        }
+
+        span#logOff {
+            text-align: right;
+            float: right;
+            margin-right: 10px;
+        }
+
+        #filterPanel {
+            padding: 10px;
+            margin-right: 30px;
+        }
+
+        .buttons {
+            width: 15vw;
+            border-radius: 30%;
+            background-color: white;
+            color: black;
         }
 
 
@@ -1059,160 +1097,162 @@
 
 <body onload="LoadSuggestions(); CheckAdmin();">
     <header class="homeBar">
+        <span id="home"><button id="home" onclick="LoadSuggestions()">Home</button></span>
+        <span id="logOff"><button id="logOff" onclick="LogOff()">Log Off</button></span>
         <h1>Devil's Suggestion</h1>
-        <span id="userNameText"></span>
-        <a href="#" onclick="LogOff()">Log Off</a>
     </header>
 
-    <div class="container">
-        <div class="SubmitPanel">
-            <div id="newPost">Create New Post</div>
-            <form onsubmit="NewSuggestion($('#desc').val() , $('#category').val()); return false;">
-                <label class="label">Category of Suggestion:</label><br>
-                <select name="category" id="category">
-                    <option value="Money">Money</option>
-                    <option value="HR">HR</option>
-                    <option value="Employee">Employee</option>
-                    <option value="Hours">Working Hours</option>
-                    <option value="Other">Other</option>
-                </select>
-                <br><br>
-                <label class="label">Suggestion Details:</label><br>
-                <textarea name="desc" id="desc" maxlength="500" required></textarea>
-                <br><br>
-                <button type="submit" id="submit">Submit Suggestion</button>
-            </form>
+        <div class="container">
+            <div class="SubmitPanel">
+                <div id="newPost">Create New Post</div>
+                <form onsubmit="NewSuggestion($('#desc').val() , $('#category').val()); return false;">
+                    <label class="label">Category of Suggestion:</label><br>
+                    <select name="category" id="category">
+                        <option value="Money">Money</option>
+                        <option value="HR">HR</option>
+                        <option value="Employee">Employee</option>
+                        <option value="Hours">Working Hours</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <br><br>
+                    <label class="label">Suggestion Details:</label><br>
+                    <textarea name="desc" id="desc" maxlength="500" required></textarea>
+                    <br><br>
+                    <button type="submit" id="submit">Submit Suggestion</button>
+                </form>
+            </div>
+
+            <main id="suggestionsPanel" class="contentPanel">
+                <h2 id="middlePanelTitle"> Current Suggestions</h2><hr>
+                <h3 id="topPost">Top Post</h3>
+                <section class="suggestionsBox" id="suggestionsBox"></section>
+                <section class="editAccountPanel" id="editAccountPanel" style="visibility:hidden">
+                    <div id="editAccountPanel">
+                        <form>
+                            <table>
+                                <tr>
+                                    <td>
+                                        User Name:
+                                    </td>
+                                    <td>
+                                        <input type="text" id="editLogonId" />
+                                    </td>
+                                    <td>
+                                        <input type="text" id="accountID" style="visibility:hidden;" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Password:</td>
+                                    <td><input type="password" id="editLogonPassword" minlength="10" /> </td>
+                                    <td><label for="show">Show Password</label><input style="margin-left:3px;" type="checkbox" onclick="ShowPassword()" /></td>
+                                </tr>
+                                <tr>
+                                    <td>First Name:</td>
+                                    <td><input type="text" id="editLogonFName" /></td>
+                                </tr>
+                                <tr>
+                                    <td>Last Name:</td>
+                                    <td><input type="text" id="editLogonLName" /></td>
+                                </tr>
+                                <tr>
+                                    <td>Email Address:</td>
+                                    <td><input type="text" id="editLogonEmail" /></td>
+                                </tr>
+                                <tr>
+                                    <td>Security Question:</td>
+                                    <td><input type="text" id="currentSecQ" /></td>
+                                    <td>
+                                        <select id="editSecQuestion" placeholder="Choose a security question" required>
+                                            <option disabled selected> -- Select a Security Question -- </option>
+                                            <option value="Pie or Cake?">Pie or Cake?</option>
+                                            <option value="Favorite Number between 1-100">Favorite Number between 1-100</option>
+                                            <option value="Favorite Color">Favorite Color</option>
+                                            <option value="Are you a Cop? Don't lie">Are you a Cop? Don't lie</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Security Answer:</td>
+                                    <td><input type="text" id="editSecAnswer" /></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Admin:
+                                    </td>
+                                    <td><input type="text" id="editAdmin" /></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        LockedOut?
+                                    </td>
+                                    <td><input type="text" id="editLockedOut" /></td>
+                                    <td><button onclick="UnlockAccount();">Unlock</button></td>
+                                </tr>
+                                <tr>
+                                    <td><button onclick="UpdateAccount();">Save</button></td>
+                                    <td><a href="javascript:void(0);" onclick="LoadAccounts(); ShowPassword();" style="float:right;">Return</a></td>
+                                </tr>
+                            </table>
+                        </form>
+
+                    </div>
+                </section>
+            </main>
+
+            <div class="adminContainer">
+                <section id="filterPanel">
+                    <h3>Filters</h3>
+                    <div id="buttons">
+                        <button class="buttons" id="filterLink" onclick="FilterSuggestions('Employee')">Employees Suggestions</button><br />
+                        <button class="buttons" id="filterLink" onclick="FilterSuggestions('Hours')">Hours Suggestions</button><br />
+                        <button class="buttons" id="filterLink" onclick="FilterSuggestions('HR')">HR Suggestions</button><br />
+                        <button class="buttons" id="filterLink" onclick="FilterSuggestions('Other')">Other Suggestions</button><br /><br />
+                        <button class="buttons" id="filterLink" onclick="FilterSuggestions('Evaluating')">Suggestions in Evaluation</button><br />
+                        <button class="buttons" id="filterLink" onclick="FilterSuggestions('In Progress')">Suggestions in Progress</button><br />
+                        <button class="buttons" id="filterLink" onclick="FilterSuggestions('Completed')">Completed Suggestions</button><br />
+                    </div>
+                </section>
+
+                <section id="adminPanel" style="visibility: hidden">
+                    <div id="buttons">
+                        <button class="buttons" id="suggestionsLink" onclick="LoadUnapprovedSuggestions()">Review Suggestion Requests</button><br />
+                        <button class="buttons" id="suggestionsLink" onclick="ManageSuggestions()">Manage Suggestions</button><br />
+                        <button class="buttons" id="suggestionsLink" onclick="LoadUnapprovedAccounts()">Review Account Requests</button><br />
+                        <button class="buttons" id="suggestionsLink" onclick="LoadAccounts()">Manage Accounts</button><br /><br />
+                        <!--<button class="buttons" id="suggestionsLink" onclick="LoadSuggestions()">Home</button>-->
+                    </div>
+                </section>
+
+            </div>
+            <!--This section is for the edit suggestion pop-up box-->
+            <div class="form-popup" id="myForm">
+                <form class="form-container" onsubmit="SaveEdits($('#editDesc').val() , $('#editCategory').val(), $('#editStatus').val(), postID); return false;">
+                    <h1>Edit Suggestion</h1>
+
+                    <label class="popUpLabel">Category of Suggestion:</label><br>
+                    <select name="editCategory" id="editCategory">
+                        <option value="Money">Money</option>
+                        <option value="HR">HR</option>
+                        <option value="Employee">Employee</option>
+                        <option value="Hours">Working Hours</option>
+                        <option value="Other">Other</option>
+                    </select><br />
+
+                    <label class="popUpLabel">Status of Sugegstion:</label><br>
+                    <select name="editStatus" id="editStatus">
+                        <option value="Evaluating">Evaluating</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                    </select><br />
+
+                    <label class="popUpLabel"><b>Desctiption of Suggestion</b></label>
+                    <input type="text" placeholder="Description" name="editDesc" id="editDesc">
+
+                    <button type="submit" class="btn">Save Edits</button>
+                    <button type="button" class="btn cancel" onclick="CloseForm()">Cancel</button>
+                </form>
+            </div>
+
         </div>
-
-        <main id="suggestionsPanel" class="contentPanel">
-            <h2 id="middlePanelTitle"> Current Suggestions</h2><hr>
-            <h3 id="topPost">Top Post</h3>
-            <section class="suggestionsBox" id="suggestionsBox"></section>
-            <section class="editAccountPanel" id="editAccountPanel" style="visibility:hidden">
-                <div id="editAccountPanel">
-                    <form>
-                        <table>
-                            <tr>
-                                <td>
-                                    User Name:
-                                </td>
-                                <td>
-                                    <input type="text" id="editLogonId" />
-                                </td>
-                                <td>
-                                    <input type="text" id="accountID" style="visibility:hidden;" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Password:</td>
-                                <td><input type="password" id="editLogonPassword" minlength="10" /> </td>
-                                <td><label for="show">Show Password</label><input style="margin-left:3px;" type="checkbox" onclick="ShowPassword()" /></td>
-                            </tr>
-                            <tr>
-                                <td>First Name:</td>
-                                <td><input type="text" id="editLogonFName" /></td>
-                            </tr>
-                            <tr>
-                                <td>Last Name:</td>
-                                <td><input type="text" id="editLogonLName" /></td>
-                            </tr>
-                            <tr>
-                                <td>Email Address:</td>
-                                <td><input type="text" id="editLogonEmail" /></td>
-                            </tr>
-                            <tr>
-                                <td>Security Question:</td>
-                                <td><input type="text" id="currentSecQ" /></td>
-                                <td>
-                                    <select id="editSecQuestion" placeholder="Choose a security question" required>
-                                        <option disabled selected> -- Select a Security Question -- </option>
-                                        <option value="Pie or Cake?">Pie or Cake?</option>
-                                        <option value="Favorite Number between 1-100">Favorite Number between 1-100</option>
-                                        <option value="Favorite Color">Favorite Color</option>
-                                        <option value="Are you a Cop? Don't lie">Are you a Cop? Don't lie</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Security Answer:</td>
-                                <td><input type="text" id="editSecAnswer" /></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Admin:
-                                </td>
-                                <td><input type="text" id="editAdmin" /></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    LockedOut?
-                                </td>
-                                <td><input type="text" id="editLockedOut" /></td>
-                                <td><button onclick="UnlockAccount();">Unlock</button></td>
-                            </tr>
-                            <tr>
-                                <td><button onclick="UpdateAccount();">Save</button></td>
-                                <td><a href="javascript:void(0);" onclick="LoadAccounts(); ShowPassword();" style="float:right;">Return</a></td>
-                            </tr>
-                        </table>
-                    </form>
-
-                </div>
-            </section>
-        </main>
-
-        <div class="adminContainer">
-            <section id="filterPanel">
-                <h4><u>Filters</u></h4><br />
-                <a href="#" id="filterLink" onclick="FilterSuggestions('Employee')">Employees Suggestions</a><br>
-                <a href="#" id="filterLink" onclick="FilterSuggestions('Hours')">Hours Suggestions</a><br>
-                <a href="#" id="filterLink" onclick="FilterSuggestions('HR')">HR Suggestions</a><br>
-                <a href="#" id="filterLink" onclick="FilterSuggestions('Other')">Other Suggestions</a><br>
-                <a href="#" id="filterLink" onclick="FilterSuggestions('Evaluating')">Suggestions in Evaluation</a><br>
-                <a href="#" id="filterLink" onclick="FilterSuggestions('In Progress')">Suggestions In Progress</a><br>
-                <a href="#" id="filterLink" onclick="FilterSuggestions('Completed')">Completed Suggestionss</a><br>
-                <a href="#" id="filterLink" onclick="FilterSuggestions('All')">Show All Suggestions</a><br>
-            </section>
-
-            <section id="adminPanel" style="visibility: hidden">
-                <a href="#" id="suggestionsLink" onclick="LoadUnapprovedSuggestions()">Review Suggesion Requests</a><br>
-                <a href="#" id="suggestionsLink" onclick="ManageSuggestions()">Manage Suggesions</a><br>
-                <a href="#" id="suggestionsLink" onclick="LoadUnapprovedAccounts()">Review Account Requests</a><br>
-                <a href="#" id="suggestionsLink" onclick="LoadAccounts()">Manage Accounts</a><br><br>
-                <a href="#" id="suggestionsLink" onclick="LoadSuggestions()">Home</a><br><br>
-                <!--<h2>Current Unapproved Suggestions</h2><hr>
-            <section class="unapprovedSuggestionsBox" id="unapprovedSuggestionsBox"></section>-->
-            </section>
-        </div>
-        <!--This section is for the edit suggestion pop-up box-->
-        <div class="form-popup" id="myForm">
-            <form class="form-container"onsubmit="SaveEdits($('#editDesc').val() , $('#editCategory').val(), $('#editStatus').val(), postID); return false;" >
-                <h1>Edit Suggestion</h1>
-
-                <label class="popUpLabel">Category of Suggestion:</label><br>
-                <select name="editCategory" id="editCategory">
-                    <option value="Money">Money</option>
-                    <option value="HR">HR</option>
-                    <option value="Employee">Employee</option>
-                    <option value="Hours">Working Hours</option>
-                    <option value="Other">Other</option>
-                </select><br />
-
-                <label class="popUpLabel">Status of Sugegstion:</label><br>
-                <select name="editStatus" id="editStatus">
-                    <option value="Evaluating">Evaluating</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Completed">Completed</option>
-                </select><br />
-
-                <label class="popUpLabel"><b>Desctiption of Suggestion</b></label>
-                <input type="text" placeholder="Description" name="editDesc" id="editDesc">
-
-                <button type="submit" class="btn">Save Edits</button>
-                <button type="button" class="btn cancel" onclick="CloseForm()">Cancel</button>
-            </form>
-        </div>
-
-    </div>
-    </body>
+</body>
     </html>
