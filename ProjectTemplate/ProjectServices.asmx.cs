@@ -221,7 +221,7 @@ namespace ProjectTemplate
         public void UnlockAccount(string userId)
         {
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
-            string sqlSelect = "update Accounts set lockedOut=0 where ID=@userIdValue";
+            string sqlSelect = "update Accounts set lockedOut=0, invalidAttempts=0 where ID=@userIdValue";
 
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
             MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);

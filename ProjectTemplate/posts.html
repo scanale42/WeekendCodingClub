@@ -621,7 +621,7 @@
 
         //an ajax to approve an account request
         function UnlockAccount() {
-            alert(editUserID);
+            //alert(editUserID);
             var webMethod = "ProjectServices.asmx/UnlockAccount";
             var parameters = "{\"userId\":\"" + encodeURI(editUserID) + "\"}";
 
@@ -1026,6 +1026,15 @@
             color: black;
         }
 
+        #unlockButton {
+            background: #8C1D40;
+            color: white;
+            border: none;
+            padding: 1vh;
+            margin: 0;
+            cursor: pointer;
+        }
+
         .buttons:focus {
             color: white;
             background-color: #8C1D40;
@@ -1105,6 +1114,7 @@
         <span id="home"><button id="home" onclick="LoadSuggestions()">Home</button></span>
         <span id="logOff"><button id="logOff" onclick="LogOff()">Log Off</button></span>
         <h1>Devil's Suggestion</h1>
+        <span id="userNameText"></span>
     </header>
 
         <div class="container">
@@ -1191,7 +1201,7 @@
                                         LockedOut?
                                     </td>
                                     <td><input type="text" id="editLockedOut" /></td>
-                                    <td><button onclick="UnlockAccount();">Unlock</button></td>
+                                    <td><input type="button" onclick="UnlockAccount();" value="Unlock" id="unlockButton"></inputbutton></td>
                                 </tr>
                                 <tr>
                                     <td><button onclick="UpdateAccount();">Save</button></td>
