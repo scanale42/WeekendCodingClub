@@ -1002,10 +1002,10 @@ namespace ProjectTemplate
             MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
 
             sqlCommand.Parameters.AddWithValue("@idValue", HttpUtility.UrlDecode(id));
-            sqlCommand.Parameters.AddWithValue("@fNameValue", HttpUtility.UrlDecode(firstName));
-            sqlCommand.Parameters.AddWithValue("@lNameValue", HttpUtility.UrlDecode(lastName));
-            sqlCommand.Parameters.AddWithValue("@uNameValue", HttpUtility.UrlDecode(userName));
-            sqlCommand.Parameters.AddWithValue("@emailValue", HttpUtility.UrlDecode(emailAddress));
+            sqlCommand.Parameters.AddWithValue("@firstNameValue", HttpUtility.UrlDecode(firstName));
+            sqlCommand.Parameters.AddWithValue("@lastNameValue", HttpUtility.UrlDecode(lastName));
+            sqlCommand.Parameters.AddWithValue("@userNameValue", HttpUtility.UrlDecode(userName));
+            sqlCommand.Parameters.AddWithValue("@emailAddressValue", HttpUtility.UrlDecode(emailAddress));
             sqlCommand.Parameters.AddWithValue("@pwdValue", HttpUtility.UrlDecode(pwd));
             sqlCommand.Parameters.AddWithValue("@adminValue", HttpUtility.UrlDecode(admin));
 
