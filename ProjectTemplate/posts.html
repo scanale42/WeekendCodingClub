@@ -374,6 +374,7 @@
 
             $('#editAccountPanel').css("visibility", "hidden");
             document.getElementById('topPost').style.visibility = 'hidden';
+            middlePanelTitle.innerText = filter + " Suggestions";
 
             $.ajax({
                 type: "POST",
@@ -387,7 +388,6 @@
                         suggestionsArray = msg.d;
                         //this clears out the div that will hold our suggestion info. Not sure if this is in use any more.
                         $("#suggestionsBox").empty();
-                        middlePanelTitle.innerText = filter + " Suggestions";
 
                         for (var i = 0; i < suggestionsArray.length; i++) {
                             var suggestion;
@@ -714,8 +714,6 @@
                             var lName = account[i].lastName;
                             var uName = account[i].userName;
                             var eAdd = account[i].emailAddress;
-                            var secQ = account[i].secQuestion;
-                            var secA = account[i].secAnswer;
                             var pw = account[i].password;
                             var isadmin;
                             var isLockedOut;
@@ -741,11 +739,8 @@
                             $('#editLogonFName').val(fName);
                             $('#editLogonLName').val(lName);
                             $('#editLogonEmail').val(eAdd);
-                            $('#currentSecQ').val(secQ);
-                            $('#editSecAnswer').val(secA);
                             $('#editAdmin').val(isadmin);
                             $('#editLockedOut').val(isLockedOut);
-                            $('#currentSecQ').attr('readonly', true);
                         }
                     }
 
@@ -766,8 +761,6 @@
             var firstName = document.getElementById('editLogonFName').value;
             var lastName = document.getElementById('editLogonLName').value;
             var emailAddress = document.getElementById('editLogonEmail').value;
-            var secQuestion = document.getElementById('editSecQuestion').value;
-            var secAnswer = document.getElementById('editSecAnswer').value;
             var isadmin = document.getElementById('editAdmin').value;
 
             if (isadmin == 'Yes') {
@@ -777,8 +770,7 @@
 
             var webMethod = "ProjectServices.asmx/UpdateAccount";
             var parameters = "{\"id\":\"" + encodeURI(id) + "\",\"firstName\":\"" + encodeURI(firstName) + "\",\"lastName\":\"" + encodeURI(lastName) + "\",\"userName\":\"" + encodeURI(userName) +
-                "\",\"emailAddress\":\"" + encodeURI(emailAddress) + "\",\"pwd\":\"" + encodeURI(pwd) + "\",\"secQuestion\":\"" + encodeURI(secQuestion) +
-                "\",\"secAnswer\":\"" + encodeURI(secAnswer) + "\",\"admin\":\"" + encodeURI(isadmin) + "\"}";
+                "\",\"emailAddress\":\"" + encodeURI(emailAddress) + "\",\"pwd\":\"" + encodeURI(pwd) +  "\",\"admin\":\"" + encodeURI(isadmin) + "\"}";
 
             //jQuery ajax method
             $.ajax({
@@ -789,6 +781,7 @@
                 dataType: "json",
                 success: function (msg) {
                     alert('This account has been updated.')
+                    EditAccount(id);
 
                 },
                 error: function (err) {
@@ -1174,23 +1167,6 @@
                                     <td><input type="text" id="editLogonEmail" /></td>
                                 </tr>
                                 <tr>
-                                    <td>Security Question:</td>
-                                    <td><input type="text" id="currentSecQ" /></td>
-                                    <td>
-                                        <select id="editSecQuestion" placeholder="Choose a security question" required>
-                                            <option disabled selected> -- Select a Security Question -- </option>
-                                            <option value="Pie or Cake?">Pie or Cake?</option>
-                                            <option value="Favorite Number between 1-100">Favorite Number between 1-100</option>
-                                            <option value="Favorite Color">Favorite Color</option>
-                                            <option value="Are you a Cop? Don't lie">Are you a Cop? Don't lie</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Security Answer:</td>
-                                    <td><input type="text" id="editSecAnswer" /></td>
-                                </tr>
-                                <tr>
                                     <td>
                                         Admin:
                                     </td>
@@ -1201,10 +1177,10 @@
                                         LockedOut?
                                     </td>
                                     <td><input type="text" id="editLockedOut" /></td>
-                                    <td><input type="button" onclick="UnlockAccount();" value="Unlock" id="unlockButton"></inputbutton></td>
+                                    <td><input type="button" onclick="UnlockAccount();" value="Unlock" id="unlockButton"></td>
                                 </tr>
                                 <tr>
-                                    <td><button onclick="UpdateAccount();">Save</button></td>
+                                    <td><input type="button" value="Save" onclick="UpdateAccount();"></td>
                                     <td><a href="javascript:void(0);" onclick="LoadAccounts(); ShowPassword();" style="float:right;">Return</a></td>
                                 </tr>
                             </table>

@@ -991,24 +991,22 @@ namespace ProjectTemplate
 
         //Update account
         [WebMethod(EnableSession = true)]
-        public void UpdateAccount(string id, string fName, string lName, string uName, string email, string pwd, string secQ, string secA, string admin)
+        public void UpdateAccount(string id, string firstName, string lastName, string userName, string emailAddress, string pwd, string admin)
         {
-            int userID = Convert.ToInt32(Session["id"]);
+
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
 
-            string sqlSelect = "update Accounts set firstName=@fNameValue, lastName=@lNameValue, userName=@uNameValue, pwd=@pwdValue, emailAddress=@emailValue, admin=@adminValue, secQuestion=@secQValue, secAnswer=@secAValue where ID=@idValue";
+            string sqlSelect = "update Accounts set firstName=@firstNameValue, lastName=@lastNameValue, userName=@userNameValue, pwd=@pwdValue, emailAddress=@emailAddressValue, admin=@adminValue where id=@idValue";
 
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
             MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
 
             sqlCommand.Parameters.AddWithValue("@idValue", HttpUtility.UrlDecode(id));
-            sqlCommand.Parameters.AddWithValue("@fNameValue", HttpUtility.UrlDecode(fName));
-            sqlCommand.Parameters.AddWithValue("@lNameValue", HttpUtility.UrlDecode(lName));
-            sqlCommand.Parameters.AddWithValue("@uNameValue", HttpUtility.UrlDecode(uName));
-            sqlCommand.Parameters.AddWithValue("@emailValue", HttpUtility.UrlDecode(email));
+            sqlCommand.Parameters.AddWithValue("@fNameValue", HttpUtility.UrlDecode(firstName));
+            sqlCommand.Parameters.AddWithValue("@lNameValue", HttpUtility.UrlDecode(lastName));
+            sqlCommand.Parameters.AddWithValue("@uNameValue", HttpUtility.UrlDecode(userName));
+            sqlCommand.Parameters.AddWithValue("@emailValue", HttpUtility.UrlDecode(emailAddress));
             sqlCommand.Parameters.AddWithValue("@pwdValue", HttpUtility.UrlDecode(pwd));
-            sqlCommand.Parameters.AddWithValue("@secQValue", HttpUtility.UrlDecode(secQ));
-            sqlCommand.Parameters.AddWithValue("@secAValue", HttpUtility.UrlDecode(secA));
             sqlCommand.Parameters.AddWithValue("@adminValue", HttpUtility.UrlDecode(admin));
 
             sqlConnection.Open();
@@ -1021,6 +1019,7 @@ namespace ProjectTemplate
             }
             sqlConnection.Close();
 
+            
         }
 
     }
