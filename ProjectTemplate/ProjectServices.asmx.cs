@@ -257,7 +257,7 @@ namespace ProjectTemplate
             int userID = Convert.ToInt32(Session["id"]);
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
             string sqlSelect = "insert into suggestions (`desc`, submitter, approved, status, category) " +
-            "values(@descValue, @userID, 0, 0, @category); SELECT LAST_INSERT_ID();";
+            "values(@descValue, @userID, 0, 'Evaluating', @category); SELECT LAST_INSERT_ID();";
 
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
             MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
