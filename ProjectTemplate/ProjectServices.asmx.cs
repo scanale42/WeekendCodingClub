@@ -447,7 +447,7 @@ namespace ProjectTemplate
                 selection = "where status='Completed'";
             }
 
-            if (filter == "In Progress")
+            if (filter == "InProgress")
             {
                 selection = "where status='In Progress'";
             }
