@@ -1044,15 +1044,15 @@
             position: fixed;
             top: 130px;
             right: 10px;
-            border: 3px solid black;
+            border: 3px solid white;
             z-index: 9;
         }
 
         /* Add styles to the form container */
         .form-container {
+            background-color: #FFC627;
             max-width: 275px;
             padding: 10px;
-            background-color: floralwhite;
         }
 
         /* Full-width input fields */
@@ -1061,7 +1061,7 @@
             padding: 15px;
             margin: 5px 0 22px 0;
             border: none;
-            background: #f1f1f1;
+            background: #FFFFFF;
         }
 
         /* When the inputs get focus, do something */
@@ -1071,21 +1071,25 @@
         }
 
         /* Set a style for the submit/login button */
-        .form-container .btn {
-            background-color: #04AA6D;
-            color: white;
-            padding: 16px 20px;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            margin-bottom: 10px;
-            opacity: 0.8;
-        }
+            .form-container .btn {
+                background: #8C1D40;
+                color: white;
+                border: none;
+                padding: 1vh;
+                margin: 0;
+                cursor: pointer;
+
+            }
 
         /* Add a red background color to the cancel button */
-        .form-container .cancel {
-            background-color: red;
-        }
+            .form-container .cancel {
+                background: #8C1D40;
+                color: white;
+                border: none;
+                padding: 1vh;
+                margin: 0;
+                cursor: pointer;
+            }
 
         /* Add some hover effects to buttons */
         .form-container .btn:hover, .open-button:hover {
@@ -1219,7 +1223,7 @@
             <!--This section is for the edit suggestion pop-up box-->
             <div class="form-popup" id="myForm">
                 <form class="form-container" onsubmit="SaveEdits($('#editDesc').val() , $('#editCategory').val(), $('#editStatus').val(), postID); return false;">
-                    <h1>Edit Suggestion</h1>
+                    <h1>Edit Suggestion</h1><br />
 
                     <label class="popUpLabel">Category of Suggestion:</label><br>
                     <select name="editCategory" id="editCategory">
@@ -1228,14 +1232,14 @@
                         <option value="Employee">Employee</option>
                         <option value="Hours">Working Hours</option>
                         <option value="Other">Other</option>
-                    </select><br />
+                    </select><br /><br />
 
                     <label class="popUpLabel">Status of Sugegstion:</label><br>
                     <select name="editStatus" id="editStatus">
                         <option value="Evaluating">Evaluating</option>
                         <option value="InProgress">In Progress</option>
                         <option value="Completed">Completed</option>
-                    </select><br />
+                    </select><br /><br />
 
                     <label class="popUpLabel"><b>Desctiption of Suggestion</b></label>
                     <input type="text" placeholder="Description" name="editDesc" id="editDesc">
