@@ -836,11 +836,14 @@
         .homeBar {
             background: #FFC627;
             padding: 20px;
-            font-size: 1.5vw;
+            font-size: 20px;
             min-height: 80px;
-            height: 13vh;
+            height: 15vh;
             width: 100vw;
             text-align: center;
+        }
+        h1 {
+            float: none;
         }
 
         .container {
@@ -904,6 +907,8 @@
         #category {
             width: 20vw;
             border: none;
+            margin-top: 5px;
+            padding: 10px;
         }
 
         #desc {
@@ -911,6 +916,8 @@
             height: 35vh;
             resize: none;
             border: none;
+            padding: 10px;
+            margin-top: 5px;
         }
 
         .label {
@@ -967,6 +974,7 @@
             padding: 1vh;
             margin: 0;
             cursor: pointer;
+            margin: 1px;
         }
 
         #newPost {
@@ -1010,6 +1018,7 @@
         #filterPanel, #adminPanel {
             padding: 10px;
             margin-right: 30px;
+            min-width: 80px;
         }
 
         .buttons {
@@ -1041,59 +1050,49 @@
         /* The popup form - hidden by default */
         .form-popup {
             display: none;
-            position: fixed;
-            top: 130px;
-            right: 10px;
-            border: 3px solid white;
+            position: absolute;
+            top: 115px;
+            right: 0px;
+            border: 1px solid white;
+            width: 18vw;
+            min-width: 10vw;
             z-index: 9;
+            background-color: #FFC627;
+            margin-right: 10px;
+            min-height: 550px;
+        }
+
+        #popLabel {
+            color: black;
+            font-weight: bold;
+            font-size: 18px;
+            margin-left: 3vw;
         }
 
         /* Add styles to the form container */
         .form-container {
             background-color: #FFC627;
             max-width: 275px;
-            padding: 10px;
+            padding: 20px;
         }
 
         /* Full-width input fields */
-        .form-container input[type=text], .form-container input[type=password] {
-            width: 100%;
+        #editDesc {
+            width: 15vw;
             padding: 15px;
             margin: 5px 0 22px 0;
             border: none;
-            background: #FFFFFF;
+            min-height: 35vh;
+            background: #FFF;
+            padding: 5px;
+            resize: none;
         }
 
-        /* When the inputs get focus, do something */
-        .form-container input[type=text]:focus, .form-container input[type=password]:focus {
-            background-color: #ddd;
-            outline: none;
-        }
-
-        /* Set a style for the submit/login button */
-            .form-container .btn {
-                background: #8C1D40;
-                color: white;
-                border: none;
-                padding: 1vh;
-                margin: 0;
-                cursor: pointer;
-
-            }
-
-        /* Add a red background color to the cancel button */
-            .form-container .cancel {
-                background: #8C1D40;
-                color: white;
-                border: none;
-                padding: 1vh;
-                margin: 0;
-                cursor: pointer;
-            }
-
-        /* Add some hover effects to buttons */
-        .form-container .btn:hover, .open-button:hover {
-            opacity: 1;
+        #editCategory, #editStatus {
+            width: 15vw;
+            padding: 10px;
+            border: none;
+            margin-top: 5px;
         }
 
         .popUpLabel {
@@ -1101,6 +1100,12 @@
             font-weight: bold;
         }
 
+        /*add in styling for the greeting */
+        #userNameGreeting {
+            float: right;
+            margin: 20px 20px 0 0;
+            font-size: 20px;
+        }
 
 
     </style>
@@ -1110,8 +1115,11 @@
     <header class="homeBar">
         <span id="home"><button id="home" onclick="LoadSuggestions()">Home</button></span>
         <span id="logOff"><button id="logOff" onclick="LogOff()">Log Off</button></span>
+        <span id="userNameGreeting">
+            Hello,
+            <span id="userNameText"></span>
+        </span>
         <h1>Devil's Suggestion</h1>
-        <span id="userNameText"></span>
     </header>
 
         <div class="container">
@@ -1128,7 +1136,7 @@
                     </select>
                     <br><br>
                     <label class="label">Suggestion Details:</label><br>
-                    <textarea name="desc" id="desc" maxlength="500" required></textarea>
+                    <textarea name="desc" placeholder="Description" id="desc" maxlength="500" required></textarea>
                     <br><br>
                     <button type="submit" id="submit">Submit Suggestion</button>
                 </form>
@@ -1223,7 +1231,7 @@
             <!--This section is for the edit suggestion pop-up box-->
             <div class="form-popup" id="myForm">
                 <form class="form-container" onsubmit="SaveEdits($('#editDesc').val() , $('#editCategory').val(), $('#editStatus').val(), postID); return false;">
-                    <h1>Edit Suggestion</h1><br />
+                    <span id="popLabel">Edit Suggestion</span><br /><br />
 
                     <label class="popUpLabel">Category of Suggestion:</label><br>
                     <select name="editCategory" id="editCategory">
@@ -1234,15 +1242,15 @@
                         <option value="Other">Other</option>
                     </select><br /><br />
 
-                    <label class="popUpLabel">Status of Sugegstion:</label><br>
+                    <label class="popUpLabel">Status of Suggestion:</label><br>
                     <select name="editStatus" id="editStatus">
                         <option value="Evaluating">Evaluating</option>
                         <option value="InProgress">In Progress</option>
                         <option value="Completed">Completed</option>
                     </select><br /><br />
 
-                    <label class="popUpLabel"><b>Desctiption of Suggestion</b></label>
-                    <input type="text" placeholder="Description" name="editDesc" id="editDesc">
+                    <label class="popUpLabel"><b>Description of Suggestion:</b></label>
+                    <textarea placeholder="Description" name="editDesc" id="editDesc"></textarea>
 
                     <button type="submit" class="btn">Save Edits</button>
                     <button type="button" class="btn cancel" onclick="CloseForm()">Cancel</button>
